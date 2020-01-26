@@ -45,6 +45,7 @@ function cardClick(e) {
                     if (card.classList.contains('flipped')) {
                         flippedCards++;
                         if (flippedCards === 24) {
+                            document.querySelector('#current-score').innerText = 'DONE!';
                             playAgainButton.classList.add('done');
                             resetGameButton.classList.add('done');
                             if (localStorage.getItem('best-score') === null) {
