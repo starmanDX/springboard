@@ -4,21 +4,68 @@ html {
     background-repeat: no-repeat;
     background-position-x: center;
     height: 100vh;
+    cursor: default;
 }
+
 body {
     height: 100vh;
     margin: 0;
 }
-.container {
+
+*:focus {
+    outline: none;
+}
+
+h1 {
+    perspective: 1000px;
+    transition: color 1000ms;
+}
+
+.title-span {
+    display: block;
+    margin: 0 auto;
+    font-size: 15vh;
+    font-family: Luckiest Guy;
+    transform: rotateX(50deg);
+    width: 90%;
+}
+
+.score-header {
+    margin-top: 22vh;
+    margin-bottom: 0;
+    font-size: 4vh;
+    color: palevioletred;
+    font-family: Luckiest Guy;
+}
+
+.title-screen {
+    display: flex;
+    top: 0;
+    text-align: center;
+    height: 100vh;
+    max-height: 100vh;
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 1s;
+    opacity: 0;
+}
+
+.game-screen {
+    display: none;
+    top: 0;
     height: 100vh;
     min-height: 300px;
     max-height: 100vh;
-    display: flex;
     width: 90%;
     max-width: 800px;
     margin: 0 auto;
     flex-direction: column;
     justify-content: space-evenly;
+    transition: opacity 1s;
+    opacity: 0;
 }
 
 .row {
@@ -31,32 +78,44 @@ body {
 }
 
 button {
+    font-weight: bolder;
     margin: 2vh 2vh 0 2vh;
     height: 7vh;
-    min-height: 45px;
+    cursor: pointer;
     width: 100px;
     background-color: steelblue;
     border-style: none;
     border-radius: 10px;
 }
 
+#play-again {
+    display: none;
+}
+
+#play-again.done {
+    display: block;
+}
+
+#reset.done {
+    display: none;
+}
+
 .flip-card {
+    cursor: pointer;
     height: 14vh;
     min-height: 45px;
     max-height: 100px;
     width: 17.5%;
     min-width: 45px;
     max-width: 100px;
-    text-align: center;
-    line-height: 11vh;
     perspective: 1000px;
 }
 
 .flip-card-inner {
-    position: relative; 
+    position: relative;
     height: 100%;
     width: 100%;
-    transition: transform 1s;
+    transition: transform 1000ms;
     transform-style: preserve-3d;
 }
 
@@ -76,7 +135,6 @@ button {
 }
 
 .flip-card-back {
-    background-color: blue;
     transform: rotateY(180deg);
 }
 
@@ -88,11 +146,22 @@ img {
 
 #current-score {
     font-family: 'Luckiest Guy';
-    font-size: 4rem;
+    font-size: calc(40px);
     color: lightblue;
-    line-height: 12vh;
+    text-align: center;
+    height: 14vh;
+    min-height: 45px;
+    max-height: 100px;
+    width: 17.5%;
+    min-width: 45px;
+    max-width: 100px;
+    line-height: 13vh;
 }
 
 .flipped {
     transform: rotatey(180deg);
+}
+
+.show {
+    opacity: 1;
 }

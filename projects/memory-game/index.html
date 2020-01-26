@@ -10,55 +10,15 @@
     <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy&display=swap" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                    </div>
-                    <div class="flip-card-back" src="">
-                        <img src="">
-                    </div>
-                </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                    </div>
-                    <div class="flip-card-back">
-                        <img src="">
-                    </div>
-                </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                    </div>
-                    <div class="flip-card-back">
-                        <img src="">
-                    </div>
-                </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                    </div>
-                    <div class="flip-card-back">
-                        <img src="">
-                    </div>
-                </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                    </div>
-                    <div class="flip-card-back">
-                        <img src="">
-                    </div>
-                </div>
-            </div>
-        </div>
+<body draggable="false" onmousedown="return false">
+    <div class="title-screen show">
+        <h1><span class="title-span">Match</span> <span class="title-span">-a-</span> <span
+                class="title-span">GIF!</span>
+        </h1>
+        <h2 class="score-header">Best Score: <span id='best-score'>-</span></h2>
+        <button id="start-game" class="button-row">Start!</button>
+    </div>
+    <div class="game-screen">
         <div class="row">
             <div class="flip-card">
                 <div class="flip-card-inner">
@@ -125,7 +85,54 @@
                     </div>
                 </div>
             </div>
-            <div class="flip-card" id="current-score">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="">
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="">
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="">
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="">
+                    </div>
+                </div>
+            </div>
+            <div id="current-score">
             </div>
             <div class="flip-card">
                 <div class="flip-card-inner">
@@ -241,9 +248,9 @@
             </div>
         </div>
         <div class="row button-row">
-            <button>Title Screen</button>
-            <button>Play Again?</button>
-            <button>Reset</button>
+            <button id="go-to-title">Title Screen</button>
+            <button id="play-again">Play Again?</button>
+            <button id="reset">Reset</button>
         </div>
     </div>
     <script src="app.js"></script>
