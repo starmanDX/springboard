@@ -1,0 +1,35 @@
+.container {
+    width: 40%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.list-container {
+    width: 40%;
+    margin-left: 50%;
+
+}
+
+hr {
+    margin: 15px 0;
+}
+
+li {
+    margin-bottom: 20px;
+    width: max-content;
+}
+
+li>button {
+    margin-left: 15px;
+}
+
+ul {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+}
+
+.done {
+    text-decoration: line-through;
+    color: gray;
+}
