@@ -1,0 +1,124 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: impact;
+    color: white;
+    background-color: lightsteelblue;
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+.row.button-row {
+    flex-direction: row-reverse;
+}
+
+h1 {
+    font-size: 4rem;
+    margin: 0 auto;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+}
+
+p {
+    font-size: 2rem;
+    margin: 20px auto;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: black;
+}
+
+div.label {
+    text-align: left;
+    width: 30%;
+    line-height: 1.5rem;
+    font-size: 1.5rem;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+div.input {
+    width: 70%;
+}
+
+input[type="text"] {
+    width: 100%;
+    
+}
+
+#output.container {
+    width: 100%;
+}
+
+.row.meme-row {
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.meme {
+    width: 50%;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+img,
+.meme-delete,
+.meme-text {
+    cursor: pointer;
+    border-radius: 15px;
+    width: 50%;
+    height: 100%;
+}
+
+img {
+    position: relative;
+    z-index: -2;
+}
+
+.meme-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 25%;
+    z-index: 1;
+    opacity: 0;
+    font-size: 8vw;
+    background-color: black;
+}
+
+.meme-delete:hover {
+    opacity: 50%;
+}
+
+.meme-text {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    position: absolute;
+    margin: 0;
+    left: 25%;
+    z-index: -1;
+}
+
+.meme-text>div {
+    margin: 5% 0;
+    font-size: 3vw;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+}
