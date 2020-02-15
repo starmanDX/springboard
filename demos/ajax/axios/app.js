@@ -13,6 +13,24 @@
 //     }
 // }
 
+//AXIOS GET W/ CONFIG PARAMS
+// async function getJoke(firstName, lastName) {
+//     let res = await axios.get('http://api.icndb.com/jokes/random', {params: {firstName, lastName} });
+//     console.log(res);
+// }
+
+//AXIOS GET
+// async function getUsers() {
+//     const res = await axios.get('https://reqres.in/api/users');
+//     console.log(res)
+// }
+
+//AXIOS POST W/ DATA
+// async function createUser() {
+//     const res = await axios.post('https://reqres.in/api/users', {username: 'Butters', email: "butters@gmail.com", age: 1});
+//     console.log(res)
+// }
+
 async function getLaunches() {
     const res = await axios.get('https://api.spacexdata.com/v3/launches/upcoming');
     renderLaunches(res.data);
