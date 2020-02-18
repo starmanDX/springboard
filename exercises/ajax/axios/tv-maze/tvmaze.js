@@ -51,8 +51,7 @@ function populateShows(shows) {
   $showsList.empty();
 
   for (let show of shows) {
-    console.log(show)
-    if (show.image !== null) {
+    if (show.image) {
       let $item = $(
         `<div class="col-md-6 col-lg-3 Show" data-show-id="${show.id}">
          <div class="card" data-show-id="${show.id}">
@@ -60,6 +59,7 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <img class="card-img-top" src="${show.image.medium}" / >
              <p class="card-text">${show.summary}</p>
+             <button class="btn btn-outline-primary">Episodes</button>
            </div>
          </div>
        </div>
@@ -74,6 +74,7 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <img class="card-img-top" src="https://tinyurl.com/tv-missing"/>
              <p class="card-text">${show.summary}</p>
+             <button class="btn btn-outline-primary">Episodes</button>
            </div>
          </div>
        </div>
@@ -116,5 +117,27 @@ async function getEpisodes(id) {
 
   const episodesData = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`),
     episodes = episodesData.data;
-  console.log(episodes)
+  
+  return episodes;
 }
+
+function populateEpisodes(episodes) {
+  const $episodesList = $("#episodes-list");
+  $episodesList.empty();
+  $("#episodes-area").show();
+
+  for (let episode of episodes) {
+    let $item = $(
+      `<li>${episode.name} - (Season ${episode.season}, Number ${episode.number})</li>`
+    );
+    $episodesList.append($item);
+  }
+}
+
+$("#shows-list").on("click", "button", async function handleEpisodes(evt) {
+  const parentCard = evt.target.parentElement.parentElement,
+    showId = $(parentCard).data().showId;
+
+  let episodes = await getEpisodes(showId);
+  populateEpisodes(episodes);
+});
