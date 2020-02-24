@@ -21,3 +21,16 @@ def sum_pairs(nums, goal):
         >>> sum_pairs([11, 20, 4, 2, 1, 5], 100)
         ()
     """
+    checked = set()
+
+    for i in nums:
+        diff = goal - i
+        if diff in checked:
+            return (diff, i)
+        checked.add(i)
+    return ()
+
+print(sum_pairs([1, 2, 2, 10], 4))
+print(sum_pairs([4, 2, 10, 5, 1], 6))
+print(sum_pairs([5, 1, 4, 8, 3, 2], 7))
+print(sum_pairs([11, 20, 4, 2, 1, 5], 100))
