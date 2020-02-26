@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Lucky Number{% endblock %}
+{% block content %}
+    <h1>Your lucky number is: {{lucky_num}}</h1>
+    <p>{{msg}}</p>
+
+    {% if lucky_num == 3 %}
+    <h2>That's the best number!</h2>
+    {% endif %}
+{% endblock %}
+
