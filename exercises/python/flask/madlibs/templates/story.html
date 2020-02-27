@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Your Madlib Story{% endblock %}
+{% block content %}
+<h1>Here's your madlib story:</h1>
+{% if story == 'story1' %}
+<p>Once upon a time in an old, old {{place}}, there lived a large {{adjective}} {{noun}}. It loved to {{verb}} {{plural_noun}}</p>
+{% endif %}
+{% if story == 'story2' %}
+<p>Listen up! The {{place}} is off limits to you {{adjective}} {{plural_noun}} until you stop {{verb}}ing with the {{noun}}.</p>
+{% endif %}
+{% if story == 'story3' %}
+<p>I never knew the {{noun}} on the {{place}} was so {{adjective}} until I saw it {{verb}} {{plural_noun}}.</p>
+{% endif %}
+{% endblock %}

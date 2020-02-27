@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Madlibs{% endblock %}
+{% block content %}
+    <h1>Madlibs!</h1>
+    <form action="/story" id="madlib_form">
+        <label for="place">Place:
+        <input type="text" placeholder="Enter a place" name="place" class="madlib" required></label>
+        <label for="noun">Noun:
+        <input type="text" placeholder="Enter a nooun" name="noun" class="madlib" required></label>
+        <label for="verb">Verb:
+        <input type="text" placeholder="Enter a verb" name="verb" class="madlib" required></label>
+        <label for="adjective">Adjective:
+        <input type="text" placeholder="Enter an adjective" name="adjective" class="madlib" required></label>
+        <label for="plural_noun">Plural Noun:
+        <input type="text" placeholder="Enter a plural noun" name="plural_noun" class="madlib" required></label>
+        <h2>Which story do you want?</h2>
+        <label for="story1">Story 1
+            <input type="radio" name="story" value="story1" checked></label>
+        <label for="story2">Story 2
+            <input type="radio" name="story" value="story2"></label>
+        <label for="story3">Story 3
+            <input type="radio" name="story" value="story3"></label>
+        <button>Submit!</button>
+    </form>
+{% endblock %}
+{% block script %}<script src="/static/app.js"></script>{% endblock %}
