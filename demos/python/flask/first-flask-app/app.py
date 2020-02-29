@@ -1,15 +1,35 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from random import randint, choice, sample
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "chickenzarecool21837"
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
+
+MOVIES = ['Amadeus', 'Chicken Run', 'Dances With Wolves']
 
 @app.route('/')
 def home_page():
     return render_template('home.html')
+
+@app.route('/old-home-page')
+def redirect_to_home():
+    """Redirects to new homepage"""
+    return redirect('/')
+
+@app.route('/movies')
+def show_all_movies():
+    """Show list of all movies in fake DB"""
+    return render_template('movies.html', movies=MOVIES)
+
+@app.route('/movies/new', methods=["POST"])
+def add_movie():
+    title = request.form['title']
+    MOVIES.append(title)
+    flash("Added Your Movie!")
+    return redirect('/movies')
 
 @app.route('/hello')
 def say_hello():

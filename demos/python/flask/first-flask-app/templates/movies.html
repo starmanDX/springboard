@@ -1,0 +1,14 @@
+<h1>All Movies</h1>
+{% for msg in get_flashed_messages() %}
+<p>{{msg}}</p>
+{% endfor %}
+<ul>
+    {% for movie in movies%}
+    <li>{{movie}}</li>
+    {% endfor %}
+</ul>
+
+<form action="/movies/new" method="POST">
+    <input type="text" placeholder="Enter a movie title" name="title">
+    <button>Submit</button>
+</form>
