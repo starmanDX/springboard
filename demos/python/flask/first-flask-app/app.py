@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from random import randint, choice, sample
 
@@ -8,7 +8,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-MOVIES = ['Amadeus', 'Chicken Run', 'Dances With Wolves']
+MOVIES = {'Amadeus', 'Chicken Run', 'Dances With Wolves'}
 
 @app.route('/')
 def home_page():
@@ -17,6 +17,7 @@ def home_page():
 @app.route('/old-home-page')
 def redirect_to_home():
     """Redirects to new homepage"""
+    flash('That page has moved. This is our new homepage.')
     return redirect('/')
 
 @app.route('/movies')
@@ -24,11 +25,19 @@ def show_all_movies():
     """Show list of all movies in fake DB"""
     return render_template('movies.html', movies=MOVIES)
 
+@app.route('/movies/json')
+def get_movies_json():
+    json_obj = jsonify(list(MOVIES))
+    return json_obj
+
 @app.route('/movies/new', methods=["POST"])
 def add_movie():
     title = request.form['title']
-    MOVIES.append(title)
-    flash("Added Your Movie!")
+    if title in MOVIES:
+        flash("Movie already exists.", 'error')
+    else:
+        MOVIES.add(title)
+        flash("Added Your Movie!", 'success')
     return redirect('/movies')
 
 @app.route('/hello')
