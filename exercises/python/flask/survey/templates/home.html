@@ -3,5 +3,7 @@
 {% block content %}
 <h1>{{surveys['satisfaction'].title}}</h1>
 <p>{{surveys['satisfaction'].instructions}}</p>
-<button><a href="/questions/0">Start!</a></button>
+<form action="/begin" method="POST">
+    <button>Start!</button>
+</form>
 {% endblock %}
