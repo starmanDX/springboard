@@ -1,0 +1,33 @@
+h1 {
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin: 15px 0;
+}
+
+p.error {
+    background-color: rgba(255,0,0,.6);
+    color: white;
+    padding: 10px 0 10px 5px;
+    border-radius: 5px;
+    font-weight: bolder;
+}
+
+button {
+    background-color: royalblue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+button > a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.results {
+    text-align: center;
+}

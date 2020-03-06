@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Forex Converter{% endblock %}
+{% block content %}
+<h1>Forex Currency Converter</h1>
+<p>Using the form below, enter a currency to convert from and a currency to convert to along with the amount to be
+    converted.</p>
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<p class="{{category}}">{{message}}</p>
+{% endfor %}
+<form action="/results" method="POST">
+    <label for="convert_from">Converting from: <input type="text" name="convert_from" placeholder="USD" pattern="[A-Za-z]{3}" title="Must be a valid 3-letter currency code." required></label>
+    <label for="convert_to">Converting to: <input type="text" name="convert_to" placeholder="EUR" pattern="[A-Za-z]{3}" title="Must be a valid 3-letter currency code." required></label>
+    <label for="amount">Amount to convert: <input type="number" name="amount" placeholder="50" min='0' step='.01' required></label>
+    <button>Convert</button>
+</form>
+
+{% endblock %}
