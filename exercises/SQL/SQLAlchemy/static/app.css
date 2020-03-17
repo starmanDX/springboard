@@ -1,0 +1,49 @@
+button {
+    background-color: slategray;
+    color: white;
+    border: none;
+    padding: .25em;
+    border-radius: 5px;
+}
+
+button a {
+    text-decoration: none;
+    color: white;
+}
+
+.edit {
+    background-color: royalblue;
+}
+
+.delete {
+    background-color: crimson;
+}
+
+.add {
+    background-color: green;
+}
+
+img.user-photo {
+    height: 100px;
+    width: 150px;
+    float: left;
+}
+
+form input {
+    display: block;
+    margin: 10px 0;
+    width: 400px;
+}
+
+.add-user-form button {
+    margin-left: 325px;
+}
+
+div.edit-buttons a {
+    margin-left: 275px;
+    text-decoration: none;
+    border: 1px solid royalblue;
+    border-radius: 5px;
+    color: royalblue;
+    padding: .1em;
+}
