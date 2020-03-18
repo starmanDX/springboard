@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{user.get_full_name}} Details{% endblock %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endwith %}
+
+<img class="user-photo" src="{{user.image_url}}" alt="User Image">
+<h1>{{user.get_full_name}}</h1>
+<button class="edit">
+    <a href="/users/{{user.id}}/edit">Edit User</a>
+</button>
+<form action="/users/{{user.id}}/delete" method="POST">
+    <button class="delete">
+        Delete User
+    </button>
+</form>
+<div class="posts">
+    <h2>Posts</h2>
+    <ul>
+        {% for post in posts %}
+        <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
+        {% endfor %}
+    </ul>
+    <button class="edit">
+        <a href="/users/{{user.id}}/posts/new">Add Post</a>
+    </button>
+</div>
+<a class="cancel to-users" href="/users">Go To All Users</a>
+
+
+{% endblock %}
+{% block script %}{% endblock %}

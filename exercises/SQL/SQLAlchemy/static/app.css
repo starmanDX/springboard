@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 button {
     background-color: slategray;
     color: white;
@@ -13,6 +17,35 @@ button a {
 
 .edit {
     background-color: royalblue;
+    float: left;
+    margin: 0 5px;
+}
+
+.edit.right {
+    float: right;
+    margin: 10px;
+}
+
+.tags,
+.tags button {
+    font-weight: bold;
+    font-size: .75em;
+}
+
+.tags button {
+    background-color: royalblue;
+}
+
+.flash {
+    background-color: rgba(0,0,255,.1);
+    width: 100%;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+label {
+   display: block; 
+   margin: 5px 0;
 }
 
 .delete {
@@ -24,26 +57,72 @@ button a {
 }
 
 img.user-photo {
-    height: 100px;
-    width: 150px;
+    height: 150px;
+    width: 200px;
     float: left;
+    margin-right: 20px;
 }
 
-form input {
+form input[type="text"],
+form textarea {
     display: block;
     margin: 10px 0;
     width: 400px;
 }
 
-.add-user-form button {
-    margin-left: 325px;
+blockquote {
+    font-style: italic;
+    font-size: .85em;
 }
 
-div.edit-buttons a {
+div.edit-user-buttons a.cancel {
     margin-left: 275px;
     text-decoration: none;
     border: 1px solid royalblue;
     border-radius: 5px;
     color: royalblue;
     padding: .1em;
+}
+
+h2 a {
+    color:black;
+}
+
+div.edit-post-buttons a.edit,
+a.cancel {
+    text-decoration: none;
+    float: left;
+    border-radius: 5px;
+    color: white;
+    background-color: royalblue;
+    padding: .1em;
+}
+
+a.cancel {
+    color:royalblue;
+    background-color: white;
+    border: 1px solid royalblue;
+    margin: 0 5px;
+}
+
+div.posts {
+    float: left;
+}
+
+.cancel.to-users {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+div.container {
+    margin-left: 20px;
+}
+
+.centered {
+    text-align: center;
+}
+
+div.container.centered a {
+    display: block;
 }

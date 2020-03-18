@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Edit Post{% endblock %}
+{% block content %}
+<h1>Edit Post</h1>
+<form class="edit-user-form" action="/posts/{{post.id}}/edit" method="POST">
+    <label for="title">Title</label>
+    <input type="text" name="title" value="{{post.title}}" required>
+    <label for="content">Post Content</label>
+    <textarea name="content" required>{{post.content}}</textarea>
+    
+    {% for tag in tags %}
+    <label for="tag_name"><input type="checkbox" name="tag_name">{{tag.name}}</label>
+    {% endfor %}
+
+    <div class="edit-user-buttons">
+        <a class="cancel" href="/posts/{{post.id}}">Cancel</a>
+        <button class="add">
+            Save Post
+        </button>
+    </div>
+</form>
+
+{% endblock %}
+{% block script %}{% endblock %}

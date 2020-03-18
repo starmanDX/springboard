@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Post Details{% endblock %}
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endwith %}
+
+<h1>{{post.title}}</h1>
+<p>{{post.content}}</p>
+<blockquote>By {{user.get_full_name}}</blockquote>
+<p class="tags">Tags: 
+    {% for tag in post.tags %}
+        <button><a href="/tags/{{tag.id}}">{{tag.name}}</a></button>
+    {% endfor %}
+</p>
+<div class="edit-post-buttons">
+    <a class="cancel" href="/users/{{user.id}}">Go To Post's User</a>
+    <a class="edit" href="/posts/{{post.id}}/edit">Edit Post</a>
+    <form action="/posts/{{post.id}}/delete" method="POST">
+        <button class="delete">
+            Delete Post
+        </button>
+    </form>
+</div>
+{% endblock %}
+{% block script %}{% endblock %}

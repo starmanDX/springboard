@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Blogly Post Tags{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endwith %}
+<h1>All Blogly Post Tags</h1>
+<ul>
+    {% for tag in tags %}
+    <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+    {% endfor %}
+</ul>
+<button class="edit"><a href="/tags/new">Add Tag</a></button>
+<button class="edit"><a href="/">Home</a></button>
+{% endblock %}
+{% block script %}{% endblock %}

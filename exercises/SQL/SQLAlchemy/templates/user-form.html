@@ -9,9 +9,12 @@
     <input type="text" name="last-name" placeholder="Enter a last name" required>
     <label for="image-url">Image URL</label>
     <input type="text" name="image-url" placeholder="Provide an image for this user" required>
-    <button class="add">
-        Add User
-    </button>
+    <div class="edit-user-buttons">
+        <a class="cancel" href="/users">Cancel</a>
+        <button class="add">
+            Add User
+        </button>
+    </div>
 </form>
 {% endblock %}
 {% block script %}{% endblock %}
