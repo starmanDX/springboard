@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Pets</title>
+</head>
+<body>
+    <h1>All Pets</h1>
+    <ul>
+        {% for pet in pets %}
+        <li><a href="/{{pet.id}}">{{pet.name}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add a New Pet</h2>
+    <form action="/" method="POST">
+        <input type="text" name="name" placeholder="Name">
+        <input type="text" name="species" placeholder="Species">
+        <input type="number" name="hunger" placeholder="Hunger Level">
+        <button>Submit</button>
+    </form>
+</body>
+</html>
