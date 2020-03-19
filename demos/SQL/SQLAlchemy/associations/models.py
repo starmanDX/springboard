@@ -15,6 +15,9 @@ class Department(db.Model):
     dept_name = db.Column(db.Text, nullable=False, unique=True)
     phone = db.Column(db.Text)
 
+    def __repr__(self):
+        return f'<Department dept_code={self.dept_code} dept_name={self.dept_name} phone={self.phone}>'
+
 class Employee(db.Model):
     """Employee. An employee has one department."""
 
@@ -23,4 +26,18 @@ class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, nullable=False, unique=True)
     state = db.Column(db.Text, nullable=False, default='CA')
+    dept_code = db.Column(db.Text, db.ForeignKey('departments.dept_code'))
 
+    dept = db.relationship('Department', backref='employees')
+
+    def __repr__(self):
+        return f'<Employee name={self.name} state={self.state} dept_code={self.dept_code}>'
+
+def get_directory():
+        all_emps = Employee.query.all()
+
+        for emp in all_emps:
+            if emp.dept is not None:
+                print(emp.name, emp.dept.dept_name, emp.dept.phone)
+            else:
+                print(emp.name)
