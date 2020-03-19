@@ -9,7 +9,7 @@
     <textarea name="content" required>{{post.content}}</textarea>
     
     {% for tag in tags %}
-    <label for="tag_name"><input type="checkbox" name="tag_name">{{tag.name}}</label>
+    <label for="tag_{{tag.id}}"><input type="checkbox" value="{{tag.id}}" id="tag_{{tag.id}}" {% if tag in post.tags %} checked {% endif %} name="tags">{{tag.name}}</label>
     {% endfor %}
 
     <div class="edit-user-buttons">

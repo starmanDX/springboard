@@ -5,6 +5,12 @@
 <form class="add-user-form" action="/tags/new" method="POST">
     <label for="name">Tag Name</label>
     <input type="text" name="name" placeholder="Enter a tag name" required>
+    
+    {% for post in posts %}
+    <label for="post_{{post.id}}"><input type="checkbox" value="{{post.id}}" id="post_{{post.id}}"
+            name="posts">{{post.title}}</label>
+    {% endfor %}
+    
     <div class="edit-user-buttons">
         <a class="cancel" href="/tags">Cancel</a>
         <button class="add">

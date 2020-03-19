@@ -5,6 +5,12 @@
 <form class="edit-user-form" action="/tags/{{tag.id}}/edit" method="POST">
     <label for="name">Tag Name</label>
     <input type="text" name="name" value="{{tag.name}}" required>
+    
+    {% for post in posts %}
+    <label for="post_{{post.id}}"><input type="checkbox" value="{{post.id}}" id="post_{{post.id}}" {% if post in tag.posts %}
+            checked {% endif %} name="posts">{{post.title}}</label>
+    {% endfor %}
+    
     <div class="edit-user-buttons">
         <a class="cancel" href="/tags/{{tag.id}}">Cancel</a>
         <button class="add">

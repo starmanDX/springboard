@@ -10,6 +10,11 @@
     <p>{{post.content}}</p>
     <blockquote>By <a href="/users/{{post.user_id}}">{{post.user.get_full_name}}</a> on {{post.formatted_date}}
     </blockquote>
+    <p class="tags"><a class="home" href="/tags">Tags:</a>
+        {% for tag in post.tags %}
+        <button><a href="/tags/{{tag.id}}">{{tag.name}}</a></button>
+        {% endfor %}
+    </p>
     {% endfor %}
 </div>
 <button class="edit right"><a href="/users">View All Users</a></button>

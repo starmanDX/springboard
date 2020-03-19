@@ -7,6 +7,11 @@
     <input type="text" name="title" placeholder="Enter a title" required>
     <label for="content">Post Content</label>
     <textarea name="content" rows="10" cols="30" placeholder="Enter post content here..." required></textarea>
+    
+    {% for tag in tags %}
+    <label for="tag_{{tag.id}}"><input type="checkbox" value="{{tag.id}}" id="tag_{{tag.id}}" name="tags">{{tag.name}}</label>
+    {% endfor %}
+    
     <div class="edit-buttons">
        <a class="cancel" href="/users/{{user.id}}">Cancel</a>
        <button class="add">
