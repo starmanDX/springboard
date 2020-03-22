@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Pet Adoption Agency{% endblock %}
+{% block content %}
+<h1 class="text-center">Pet Adoption Agency</h1>
+<a href="/add" class="btn btn-success float-right mr-5">Add a Pet</a>
+<div class="container">
+    <div class="container">
+        <h2>Available Pets:</h2>
+        <div class="container">
+            <div class="row">
+                {% if not pets %}
+                <p>No pets currently available for adoption.</p>
+                {% endif %}
+                {% for pet in pets %}
+                {% if pet.available %}
+                <div class="col-12 col-sm-6 col-lg-4 my-3">
+                    <div class="card">
+                        <img src="{% if pet.photo_url %}{{pet.photo_url}}{% endif %} {% if not pet.photo_url %}/static/images/noimage.jpg{% endif %}"
+                            class="card-img-top" alt="{{pet.name}}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{pet.name}}</h5>
+                            <a href="#" class="btn btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Adopted Pets:</h2>
+        <div class="container">
+            <div class="row">
+                {% if not pets %}
+                <p>No pets have been adopted yet.</p>
+                {% endif %}
+                {% for pet in pets %}
+                {% if not pet.available %}
+                <div class="col-12 col-sm-6 col-lg-4 my-2">
+                    <div class="card">
+                        <img src="{% if pet.photo_url %}{{pet.photo_url}}{% endif %} {% if not pet.photo_url %}/static/images/noimage.jpg{% endif %}"
+                            class="card-img-top not-available" alt="{{pet.name}}">
+                        <div class="card-body">
+                            <h5 class="card-title not-available">{{pet.name}}</h5>
+                            <a href="#" class="btn btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

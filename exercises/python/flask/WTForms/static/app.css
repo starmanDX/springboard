@@ -1,0 +1,8 @@
+img {
+    height: 250px;
+    width: 250px;
+}
+
+.not-available {
+    opacity: .25;
+}
