@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Pet Adoption Agency{% endblock %}
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
 <h1 class="text-center">Pet Adoption Agency</h1>
 <a href="/add" class="btn btn-success float-right mr-5">Add a Pet</a>
 <div class="container">
@@ -19,7 +30,7 @@
                             class="card-img-top" alt="{{pet.name}}">
                         <div class="card-body">
                             <h5 class="card-title">{{pet.name}}</h5>
-                            <a href="#" class="btn btn-primary">Learn More</a>
+                            <a href="/{{pet.id}}" class="btn btn-primary">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -43,7 +54,7 @@
                             class="card-img-top not-available" alt="{{pet.name}}">
                         <div class="card-body">
                             <h5 class="card-title not-available">{{pet.name}}</h5>
-                            <a href="#" class="btn btn-primary">Learn More</a>
+                            <a href="/{{pet.id}}" class="btn btn-primary">Learn More</a>
                         </div>
                     </div>
                 </div>
