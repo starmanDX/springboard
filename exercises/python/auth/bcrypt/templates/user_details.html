@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}User Details{% endblock %}
+{% block content %}
+<h2>Details for {{user.username}}</h2>
+<div class="container mb-5">
+    <p>First Name: {{user.first_name}}</p>
+    <p>Last Name: {{user.last_name}}</p>
+    <p>Email: {{user.email}}</p>
+    <form action="/users/{{user.username}}/delete" method="POST">
+        <a href="/users/{{user.username}}/feedback/add" class="btn btn-link btn-sm btn-info text-white">Add Feedback</a>
+        <button class="btn btn-danger text-white btn-sm">Delete User</button>
+    </form>
+</div>
+
+<h2>Feedback by {{user.username}}</h2>
+<div class='container'>
+    {% if not all_feedback %}
+    <p>No feedback for this user yet!</p>
+    {% endif %}
+    {% for feedback in all_feedback %}
+    <div class="card mb-3">
+        <div class="container pt-3 card-title">
+            <h3>{{feedback.title}}</h3>
+            <div class="card-body">
+                <p>{{feedback.content}}</p>
+
+            </div>
+            <form action="/feedback/{{feedback.id}}/delete" method='POST'>
+                <a href="/feedback/{{feedback.id}}/update" class="btn btn-link btn-sm btn-info text-white">Edit</a>
+                <button class='btn btn-danger text-white btn-sm'>Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

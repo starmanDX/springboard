@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Feedback App  {% endblock %}
+
+{% block content %}
+<h1>Welcome to the Feedback App!</h1>
+<p>View all feedback for our app below...</p>
+
+{% for feedback in all_feedback %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h2>{{feedback.title}}</h2>
+    </div>
+    <div class="card-body">
+        <p>{{feedback.content}}</p>
+        <blockquote class="text-muted">
+            -{{feedback.user.username}}
+        </blockquote>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
