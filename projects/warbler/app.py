@@ -4,8 +4,8 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
-from models import db, connect_db, User, Message
+from forms import UserAddForm, UserEditForm, LoginForm, MessageForm
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -83,6 +83,7 @@ def signup():
 
         do_login(user)
 
+        flash(f"Signup successful. Welcome {user.username}!", 'success')
         return redirect("/")
 
     else:
@@ -113,8 +114,10 @@ def login():
 def logout():
     """Handle logout of user."""
 
-    # IMPLEMENT THIS
+    do_logout()
 
+    flash("You have been successfully logged out!", 'info')
+    return redirect("/")
 
 ##############################################################################
 # General user routes:
@@ -185,6 +188,9 @@ def add_follow(follow_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    if g.user.id == follow_id:
+        return redirect("/")
+    
     followed_user = User.query.get_or_404(follow_id)
     g.user.following.append(followed_user)
     db.session.commit()
@@ -207,11 +213,81 @@ def stop_following(follow_id):
     return redirect(f"/users/{g.user.id}/following")
 
 
+@app.route('/users/add_like/<int:msg_id>', methods=['POST'])
+def add_like(msg_id):
+    """Add a message like for the currently-logged-in user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    liked_msg = Message.query.get_or_404(msg_id)
+
+    if g.user.id == liked_msg.user_id:
+        return redirect("/")
+
+    for like in g.user.likes:
+        if msg_id == like.id:
+            
+            g.user.likes.remove(liked_msg)
+            db.session.commit()
+            return redirect("/")
+
+    g.user.likes.append(liked_msg)
+    db.session.commit()
+
+    return redirect("/")
+    # g.user.following.append(followed_user)
+    # db.session.commit()
+
+    # return redirect(f"/users/{g.user.id}/following")
+
+
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
 
-    # IMPLEMENT THIS
+    form = UserEditForm()
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    if form.validate_on_submit():
+        user = User.authenticate(g.user.username,
+                                 form.password.data)
+
+        if user:
+            g.user.username = form.username.data
+            g.user.email = form.email.data
+            g.user.bio = form.bio.data
+            g.user.location = form.location.data
+            if form.image_url.data:
+                g.user.image_url = form.image_url.data
+            else:
+                g.user.image_url = '/static/images/default-pic.png'
+            if form.header_image_url.data:
+                g.user.header_image_url = form.header_image_url.data
+            else:
+                g.user.header_image_url = '/static/images/warbler-hero.jpg'
+            
+            try:
+                db.session.commit()
+            except IntegrityError as e:
+                db.session.rollback()
+                if 'username' in e.orig.pgerror:
+                    form.username.errors.append('Username is already in use.')
+                    return render_template('users/edit.html', form=form, user=g.user)
+                if 'email' in e.orig.pgerror:
+                    form.email.errors.append('Email is already in use.')
+                    return render_template('users/edit.html', form=form, user=g.user)
+            
+            flash("User updated!", "success")
+            return redirect(f"/users/{g.user.id}")
+        
+        flash("Invalid credentials.", 'danger')
+
+    return render_template('users/edit.html', form=form, user=g.user)
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -227,7 +303,8 @@ def delete_user():
     db.session.delete(g.user)
     db.session.commit()
 
-    return redirect("/signup")
+    flash('User account successfully deleted.', 'info')
+    return redirect("/")
 
 
 ##############################################################################
@@ -251,6 +328,7 @@ def messages_add():
         g.user.messages.append(msg)
         db.session.commit()
 
+        flash('New Warble successfully added!', 'success')
         return redirect(f"/users/{g.user.id}")
 
     return render_template('messages/new.html', form=form)
@@ -276,6 +354,7 @@ def messages_destroy(message_id):
     db.session.delete(msg)
     db.session.commit()
 
+    flash('Warble successfully deleted.', 'info')
     return redirect(f"/users/{g.user.id}")
 
 
@@ -292,13 +371,19 @@ def homepage():
     """
 
     if g.user:
-        messages = (Message
-                    .query
-                    .order_by(Message.timestamp.desc())
-                    .limit(100)
-                    .all())
+        msg_list = []
+        all_messages = Message.query.order_by(Message.timestamp.desc()).all()
 
-        return render_template('home.html', messages=messages)
+        for message in all_messages:
+            if message.user.id == g.user.id:
+                msg_list.append(message)
+            else:
+                msg_followers = message.user.followers
+                for follower in msg_followers:
+                    if follower.id == g.user.id or message.user.id == g.user.id:
+                        msg_list.append(message)
+
+        return render_template('home.html', messages=msg_list[:100])
 
     else:
         return render_template('home-anon.html')
