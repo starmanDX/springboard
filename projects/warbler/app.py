@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, UserEditForm, LoginForm, MessageForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -156,6 +156,20 @@ def users_show(user_id):
     return render_template('users/show.html', user=user, messages=messages)
 
 
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show list of liked messages for this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    all_messages = Message.query.order_by(Message.timestamp.desc()).all()
+    
+    return render_template('users/likes.html', Likes=Likes, messages=all_messages, user=user)
+
+
 @app.route('/users/<int:user_id>/following')
 def show_following(user_id):
     """Show list of people this user is following."""
@@ -206,10 +220,14 @@ def stop_following(follow_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    followed_user = User.query.get(follow_id)
-    g.user.following.remove(followed_user)
-    db.session.commit()
-
+    followed_user = User.query.get_or_404(follow_id)
+    
+    try:
+        g.user.following.remove(followed_user)
+        db.session.commit()
+    except ValueError:
+        return redirect('/')
+    
     return redirect(f"/users/{g.user.id}/following")
 
 
@@ -231,17 +249,15 @@ def add_like(msg_id):
             
             g.user.likes.remove(liked_msg)
             db.session.commit()
-            return redirect("/")
+
+            print('**************************')
+            print(request.form['url'])
+            return redirect(f"{request.form['url']}")
 
     g.user.likes.append(liked_msg)
     db.session.commit()
 
     return redirect("/")
-    # g.user.following.append(followed_user)
-    # db.session.commit()
-
-    # return redirect(f"/users/{g.user.id}/following")
-
 
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
@@ -338,7 +354,7 @@ def messages_add():
 def messages_show(message_id):
     """Show a message."""
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
     return render_template('messages/show.html', message=msg)
 
 
@@ -350,7 +366,7 @@ def messages_destroy(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
     db.session.delete(msg)
     db.session.commit()
 
@@ -383,7 +399,7 @@ def homepage():
                     if follower.id == g.user.id or message.user.id == g.user.id:
                         msg_list.append(message)
 
-        return render_template('home.html', messages=msg_list[:100])
+        return render_template('home.html', Likes=Likes, messages=msg_list[:100])
 
     else:
         return render_template('home-anon.html')

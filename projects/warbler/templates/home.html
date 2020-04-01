@@ -53,28 +53,17 @@
             </div>
             {% if msg.user.username != g.user.username %}
               <form method="POST" action="/users/add_like/{{ msg.id }}" id="messages-form">
-                {% if not g.user.likes %}
-                  <button class="
-                    btn 
-                    btn-sm 
-                    {{'btn-primary' if msg.id in g.user.likes.values else 'btn-secondary'}}">
+                {% if Likes.query.filter(Likes.message_id==msg.id, Likes.user_id==g.user.id).all() %}
+                  <button class="btn btn-sm btn-primary">
+                    <input type="hidden" name="url" value="/" id="url">
+                    <i class="fa fa-thumbs-up"></i>
+                  </button>
+                {% else %}
+                  <button class="btn btn-sm btn-secondary">
+                    <input type="hidden" name="url" value="/" id="url">
                     <i class="fa fa-thumbs-up"></i>
                   </button>
                 {% endif %}
-                <!-- {% for like in g.user.likes %} -->
-                  {% if msg.id == like.id %}
-                    <button class="btn btn-sm btn-primary">
-                      <i class="fa fa-thumbs-up"></i>
-                    </button>
-                  {% else %}
-                  <button class="
-                  btn 
-                  btn-sm 
-                  {{'btn-primary' if msg.id in g.user.likes.values else 'btn-secondary'}}">
-                    <i class="fa fa-thumbs-up"></i>
-                  </button>
-                  {% endif %}
-                <!-- {% endfor %} -->
               </form>
             {% endif %}
           </li>
