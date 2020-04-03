@@ -6,7 +6,7 @@ describe("#snakeToCamel", () => {
 
     // BONUS
 
-    // expect(snakeToCamel("__awesome_sauce__")).toBe("__awesomeSauce__");
-    // expect(snakeToCamel("__awesome_sauce")).toBe("__awesomeSauce");
+    expect(snakeToCamel("__awesome_sauce__")).toBe("__awesomeSauce__");
+    expect(snakeToCamel("__awesome_sauce")).toBe("__awesomeSauce");
   });
 });
