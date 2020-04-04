@@ -14,7 +14,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(64), nullable=False, unique=True)
+    email = db.Column(db.String(64), nullable=False)
     birth_year = db.Column(db.Integer, nullable=False)
     color = db.Column(db.String, nullable=False)
     lucky_num = db.Column(db.Integer, nullable=False)
