@@ -1,7 +1,7 @@
 let baseURL = "http://numbersapi.com"
 
 // 1. Make a request to the Numbers API (http://numbersapi.com/)
-f// back JSON by including the json query key, specific to this API.
+// back JSON by including the json query key, specific to this API.
 
 axios.get(`${baseURL}/3?json`)
     .then(num => {
