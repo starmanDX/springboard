@@ -1,0 +1,17 @@
+{
+  "name": "pg-intro",
+  "version": "1.0.0",
+  "description": "In this exercise, you’ll build a REST-ful backend API server for a simple company/invoice tracker.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.0.2",
+    "supertest": "^4.0.2"
+  }
+}
