@@ -21,6 +21,12 @@ router.post('/', async (req, res, next) => {
             name,
             description
         } = req.body;
+        if (code === undefined) {
+            throw new ExpressError('Must enter a company code', 400)
+        }
+        if (name === undefined) {
+            throw new ExpressError('Must enter a company name', 400)
+        }
         const results = await db.query('INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING *', [code, name, description]);
         return res.status(201).json({
             'added company': results.rows[0]
@@ -35,13 +41,13 @@ router.get('/:code', async (req, res, next) => {
         const {
             code
         } = req.params;
-        const cResults = await db.query('SELECT * FROM companies WHERE code=$1', [code]);
-        const iResults = await db.query('SELECT * FROM invoices WHERE comp_code=$1', [code])
-        if (cResults.rows.length === 0) {
+        const companyResults = await db.query('SELECT * FROM companies JOIN invoices ON companies.code = invoices.comp_code WHERE code=$1', [code]);
+        const invoiceResults = await db.query('SELECT * FROM invoices WHERE comp_code=$1', [code])
+        if (companyResults.rows.length === 0) {
             throw new ExpressError(`Can't find company with code of ${code}`, 404)
         }
-        const company = cResults.rows[0];
-        const invoices = iResults.rows;
+        const company = companyResults.rows[0];
+        const invoices = invoiceResults.rows;
 
         company.invoices = invoices.map(i => i);
 

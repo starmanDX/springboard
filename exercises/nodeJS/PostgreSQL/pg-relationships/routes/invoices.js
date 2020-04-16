@@ -20,6 +20,13 @@ router.post('/', async (req, res, next) => {
             comp_code,
             amt
         } = req.body;
+        const company = await db.query('SELECT code FROM companies WHERE code=$1', [comp_code])
+        if (comp_code === undefined || company.rows.length === 0) {
+            throw new ExpressError('Must enter a valid company code', 400);
+        }
+        if (amt === undefined || isNaN(parseFloat(amt))) {
+            throw new ExpressError('Must enter a valid invoice amount', 400);
+        }
         const results = await db.query('INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING *', [comp_code.toLowerCase(), amt])
         return res.status(201).json({
             'added invoice': results.rows[0]
@@ -54,6 +61,9 @@ router.patch('/:id', async (req, res, next) => {
         const {
             amt,
         } = req.body;
+        if (amt === undefined || isNaN(parseFloat(amt))) {
+            throw new ExpressError('Must enter a valid invoice amount', 400);
+        }
         const results = await db.query('UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *', [amt, id]);
         if (results.rows.length === 0) {
             throw new ExpressError(`Can't update invoice with id of ${id}`, 404)
