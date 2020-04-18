@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Top Customers{% endblock %}
+{% block content %}
+
+<h1>Our Most-Reserving Customers!</h1>
+
+<ol>
+  {% for customer in customers %}
+  <li><a href="/{{ customer.id }}/">{{ customer.fullName }}</a></li>
+  {% endfor %}
+</ol>
+
+{% endblock %}
