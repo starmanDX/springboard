@@ -1,9 +1,11 @@
 import os
+from tkinter import *
+from tkinter import messagebox
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms.forms import UserAddForm, LoginForm
+from forms.forms import UserAddForm, UserDeleteForm, UserLocationForm, UserLoginForm
 from models.models import db, connect_db, User, Favorite
 
 CURR_USER_KEY = "curr_user"
@@ -57,7 +59,10 @@ def do_logout():
 
 @app.route('/')
 def homepage():
-    """Show homepage"""
+    """Handle homepage route.
+    
+    Render default homepage template.
+    """
 
     # if g.user:
     #     msg_list = []
@@ -78,16 +83,28 @@ def homepage():
     return render_template('index.html')
 
 
+@app.errorhandler(404)
+def show_404(error):
+    """Handle 404 errors.
+    
+    Render default template for 404 errors.
+    """
+    return render_template('404.html')
+
+# ##############################################################################
+# # General user routes:
+
+# # Signup Route
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup.
 
     Create new user and add to DB. Redirect to home page.
 
-    If form not valid, present form.
-
     If the there already is a user with that username: flash message
     and re-present form.
+
+    If no valid form, present form.
     """
 
     form = UserAddForm()
@@ -97,6 +114,7 @@ def signup():
             user = User.signup(
                 username=form.username.data,
                 password=form.password.data,
+                location=form.location.data
             )
             db.session.commit()
 
@@ -106,25 +124,25 @@ def signup():
 
         do_login(user)
 
-        flash(f"Signup successful. Welcome {user.username}!", 'success')
+        flash(f"Signup successful. Welcome {user.username}.", 'success')
         return redirect("/")
 
-    else:
-        return render_template('users/signup.html', form=form)
+    return render_template('users/signup.html', form=form)
 
 
+# # Login Route
 @app.route('/login', methods=["GET", "POST"])
 def login():
     """Handle user login.
 
     Log user in and redirect to home page.
 
-    If form not valid, present form.
-
     If invalid credentials, flash user.
+
+    If no valid form, present form.
     """
 
-    form = LoginForm()
+    form = UserLoginForm()
 
     if form.validate_on_submit():
         user = User.authenticate(form.username.data,
@@ -140,34 +158,73 @@ def login():
     return render_template('users/login.html', form=form)
 
 
+# # Logout Route
 @app.route('/logout')
 def logout():
-    """Handle logout of user."""
+    """Handle logout of user.
+    
+    Log user out and redirect to home page.
+    """
 
     do_logout()
 
     flash("You have been successfully logged out!", 'info')
     return redirect("/")
 
-# ##############################################################################
-# # General user routes:
 
-@app.route('/users/<username>')
-def users_show(username):
-    """Show user profile."""
+# # Change User Location Route
+@app.route('/users/<username>/location', methods=["GET", "POST"])
+def user_location(username):
+    """Handle user location change.
+    
+    Update user location in DB and 
+    """
 
-    user = User.query.filter_by(username=username).one()
+    form = UserLocationForm()
 
-    # snagging messages in order from the database;
-    # user.messages won't be in order by default
-    # messages = (Message
-    #             .query
-    #             .filter(Message.user_id == user_id)
-    #             .order_by(Message.timestamp.desc())
-    #             .limit(100)
-    #             .all())
-    return render_template('users/profile.html', user=user)
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).one()
+        user.location = form.location.data
+        db.session.commit()
+        
+        flash('Location successfully updated.', 'info')
+        return redirect('/')
 
+    if (g.user.username == username):
+        user = User.query.filter_by(username=username).one()
+        form.location.data = user.location
+        return render_template('users/location.html', user=user, form=form)
+
+    flash('Unauthorized. Redirected to home page.', 'danger')
+    return redirect('/')
+
+# # Delete User Route
+@app.route('/users/<username>/delete', methods=["GET", "POST"])
+def user_delete(username):
+    """Delete a user."""
+
+    form = UserDeleteForm()
+
+    if form.validate_on_submit():
+        user = User.authenticate(g.user.username, form.password.data)
+
+        if user:
+            do_logout()
+
+            db.session.delete(g.user)
+            db.session.commit()
+
+            flash('User account successfully deleted.', 'info')
+            return redirect("/")
+
+        flash("Invalid credentials. Please try again.", 'danger')
+
+    if (g.user.username == username):
+        user = User.query.filter_by(username=username).one()
+        return render_template('users/delete.html', user=user, form=form)
+
+    flash("Unauthorized. Redirected to home page.", "danger")
+    return redirect("/")
 
 # @app.route('/users/<int:user_id>/likes')
 # def show_likes(user_id):
@@ -318,24 +375,6 @@ def users_show(username):
 
 #     return render_template('users/edit.html', form=form, user=g.user)
 
-
-# @app.route('/users/delete', methods=["POST"])
-# def delete_user():
-#     """Delete user."""
-
-#     if not g.user:
-#         flash("Access unauthorized.", "danger")
-#         return redirect("/")
-
-#     do_logout()
-
-#     db.session.delete(g.user)
-#     db.session.commit()
-
-#     flash('User account successfully deleted.', 'info')
-#     return redirect("/")
-
-
 # ##############################################################################
 # # Messages routes:
 
@@ -385,11 +424,6 @@ def users_show(username):
 
 #     flash('Warble successfully deleted.', 'info')
 #     return redirect(f"/users/{g.user.id}")
-
-@app.errorhandler(404)
-def show_404(error):
-    """Show 404 page"""
-    return render_template('404.html')
 
 ##############################################################################
 # Turn off all caching in Flask

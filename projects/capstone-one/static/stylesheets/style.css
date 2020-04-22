@@ -76,38 +76,15 @@ nav form.navbar-form {
 
 /* ============================ Signed out home */
 
-.home-hero {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  width: 100vw;
-  left: 0;
-  z-index: -1;
-  background-image: url("/static/images/signed-out-home.jpg");
-  background-size: cover;
-  background-position: center center;
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
+div.border {
+  border-width: 3px !important;
+  border-radius: 15px;
+  background-color: white;
 }
 
-.home-hero .btn {
-  text-shadow: none;
-  position: relative;
-  z-index: 1;
-  width: 150px;
+h2 + p.lead {
+  font-size: 1.1rem;
 }
-
-.home-hero h1 {
-  margin-bottom: 4rem;
-}
-
-
-
 
 /* ========================== Signup/Login */
 

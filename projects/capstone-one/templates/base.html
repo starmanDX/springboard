@@ -21,21 +21,23 @@
       </div>
       <ul class="nav navbar-nav navbar-right">
         {% if not g.user %}
-        <li><a href="/signup">Sign up</a></li>
-        <li><a href="/login">Log in</a></li>
+        <li><a href="/signup"><i class="fas fa-user-plus"></i> Sign up</a></li>
+        <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
         {% else %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-            data-toggle="dropdown"
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-            {{ g.user.username }}
+            <i class="fas fa-user-cog"></i> {{ g.user.username }} ({{g.user.location}})
           </a>
           <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/users/{{g.user.username}}">Profile</a>
-            <a class="dropdown-item" href="/favorites">Favorites</a>
+            <a class="dropdown-item" href="/favorites"><i class="far fa-bookmark"></i> View Saved Articles</a>
+            <a class="dropdown-item" href="/users/{{g.user.username}}/location"><i class="far fa-compass"></i> Change
+              Location</a>
+            <a class="dropdown-item" href="/users/{{g.user.username}}/delete"><i class="fas fa-user-times"></i> Delete
+              Account</a>
           </div>
         </li>
-        <li><a href="/logout">Log out</a></li>
+        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
         {% endif %}
       </ul>
     </div>

@@ -47,7 +47,7 @@ class User(db.Model):
         return len(found_favorites_list) == 1
 
     @classmethod
-    def signup(cls, username, password):
+    def signup(cls, username, password, location):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -58,6 +58,7 @@ class User(db.Model):
         user = User(
             username=username,
             password=hashed_pwd,
+            location=location
         )
 
         db.session.add(user)

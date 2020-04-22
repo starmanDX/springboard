@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="row justify-content-md-center">
-  <div class="col-md-7 col-lg-5">
-    <h1 class="join-message">Log In</h1>
-    <p>Welcome back. Please enter your credentials to continue.</p>
+  <div class="col-8 col-lg-6 m-auto">
+    <h1>Change Location</h1>
+    <p class="lead">Choose a new location below to change the default location filter for articles on the main page. </p>
 
     <form method="POST" id="user_form">
       {{ form.hidden_tag() }}
@@ -14,10 +14,10 @@
       {% for error in field.errors %}
       <span class="text-danger">{{ error }}</span>
       {% endfor %}
-      {{ field(placeholder=field.label.text, class="form-control") }}
+      {{ field(value=form.location, class="form-control") }}
       {% endfor %}
 
-      <button class="btn btn-primary btn-block btn-lg">Log in</button>
+      <button class="btn btn-primary btn-block btn-lg">Update Location</button>
     </form>
   </div>
 </div>
