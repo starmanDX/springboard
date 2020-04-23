@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if not g.user %}
 <div class="row justify-content-center border border-primary">
   <div class="text-dark text-center mt-5">
     <h1>COVID-19 Stats & News</h1>
@@ -10,4 +11,21 @@
   </div>
 </div>
 <hr>
-{% endblock %}
+{% endif %}
+<h2 class="text-center">Select a State:</h2>
+<p class="lead text-center">Hover to see case statistics or click to view news articles related to that region.</p>
+{% include "map.html" %}
+<hr>
+{% for item in news_data %}
+  <div class="row justify-content-center border border-primary">
+    <div class="text-dark text-center mt-5">
+      {% if item.images != null %}
+      <img src="{{item.images}}" alt="">
+      {% endif %}
+      <h3><a href="{{item.webUrl}}">{{item.title}}</a></h3>
+      <p>Published: {{item.publishedDateTime}}</p>
+      <p class="lead"><a href="{{item.webUrl}}">{{item.excerpt}}</a></p>
+     </div>
+  </div>
+{% endfor %}
+{% endblock content %}

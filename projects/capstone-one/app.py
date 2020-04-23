@@ -1,6 +1,6 @@
 import os
-from tkinter import *
-from tkinter import messagebox
+import requests
+import requests_cache
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
@@ -56,37 +56,28 @@ def do_logout():
 ##############################################################################
 # Homepage and error pages
 
+# Caches
+requests_cache.install_cache(cache_name="covid_cache", backend='sqlite', expire_after=86400)
 
 @app.route('/')
 def homepage():
     """Handle homepage route.
-    
+
     Render default homepage template.
     """
-
-    # if g.user:
-    #     msg_list = []
-    #     all_messages = Message.query.order_by(Message.timestamp.desc()).all()
-
-    #     for message in all_messages:
-    #         if message.user.id == g.user.id:
-    #             msg_list.append(message)
-    #         else:
-    #             msg_followers = message.user.followers
-    #             for follower in msg_followers:
-    #                 if follower.id == g.user.id or message.user.id == g.user.id:
-    #                     msg_list.append(message)
-
-    #     return render_template('home.html', Likes=Likes, messages=msg_list[:100])
-
-    # else:
-    return render_template('index.html')
+    stats_response = requests.get('https://api.smartable.ai/coronavirus/stats/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+    stats_data = stats_response.json()['stats']['breakdowns']
+    news_response = requests.get('https://api.smartable.ai/coronavirus/news/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+    news_data = news_response.json()['news']
+    print(f'Used Stats Cache: {stats_response.from_cache}')
+    print(f'Used News Cache: {news_response.from_cache}')
+    return render_template('index.html', stats_data=stats_data, news_data=news_data)
 
 
 @app.errorhandler(404)
 def show_404(error):
     """Handle 404 errors.
-    
+
     Render default template for 404 errors.
     """
     return render_template('404.html')
@@ -162,7 +153,7 @@ def login():
 @app.route('/logout')
 def logout():
     """Handle logout of user.
-    
+
     Log user out and redirect to home page.
     """
 
@@ -176,7 +167,7 @@ def logout():
 @app.route('/users/<username>/location', methods=["GET", "POST"])
 def user_location(username):
     """Handle user location change.
-    
+
     Update user location in DB and 
     """
 
@@ -186,7 +177,7 @@ def user_location(username):
         user = User.query.filter_by(username=username).one()
         user.location = form.location.data
         db.session.commit()
-        
+
         flash('Location successfully updated.', 'info')
         return redirect('/')
 
