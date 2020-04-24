@@ -35,16 +35,16 @@ class User(db.Model):
         default='US'
     )
 
-    favorites = db.relationship('Favorite')
+    articles = db.relationship('Article')
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}>"
 
-    def has_favorite(self, article):
-        """Does this user have 'article' favorited?"""
+    def has_saved_article(self, article):
+        """Does this user have 'article' saved?"""
 
-        found_favorites_list = [article for article in self.favorites if article == article]
-        return len(found_favorites_list) == 1
+        found_saved_articles = [i for i in self.articles if article == i.path]
+        return len(found_saved_articles) == 1
 
     @classmethod
     def signup(cls, username, password, location):
@@ -84,10 +84,10 @@ class User(db.Model):
 
         return False
 
-class Favorite(db.Model):
-    """A favorited article."""
+class Article(db.Model):
+    """A saved article."""
 
-    __tablename__ = 'favorites'
+    __tablename__ = 'articles'
 
     id = db.Column(
         db.Integer,
@@ -125,13 +125,30 @@ class Favorite(db.Model):
         default=datetime.utcnow(),
     )
 
-    favorited_by = db.Column(
+    saved_by = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
     )
 
     user = db.relationship('User')
+
+    @classmethod
+    def save_article(cls, path, location, title, excerpt, image, published_date, saved_by):
+        """Add a saved article to the DB."""
+
+        article = Article(
+            path=path,
+            location=location,
+            title=title,
+            excerpt=excerpt,
+            image=image,
+            published_date=published_date,
+            saved_by=saved_by
+        )
+
+        db.session.add(article)
+        return article
 
 
 def connect_db(app):

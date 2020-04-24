@@ -54,6 +54,42 @@
   <script src="https://unpkg.com/jquery"></script>
   <script src="https://unpkg.com/bootstrap"></script>
   <script>
+    $("#hide-map-btn").click(function(e) {
+      $("#state-select").css("display", "none");
+      $("#show-map").css("display", "block");
+    })
+
+    $("#show-map-btn").click(function(e) {
+      $("#state-select").css("display", "block");
+      $('#show-map').css('display', "none");
+    })
+
+    $('.save-article-form').submit(function(e) {
+      e.preventDefault();
+      $(this).children('button').first().toggleClass('d-none')
+      $(this).children('button').last().toggleClass('d-none')
+     })
+
+     $('.save-article-btn').click(function(e) {
+      $.ajax({
+        url: '/users/{{g.user.username}}/saved-articles',
+        type: "POST",
+        data: $(this).parent().serialize()
+      })
+      })
+
+    $('.remove-article-btn').click(function(e) {
+      $.ajax({
+        url: '/users/{{g.user.username}}/saved-articles',
+        type: "DELETE",
+        data: {
+          "path": $(this).data('path')
+        },
+        contentType:"application/json",
+        dataType:"text"
+      })
+      })
+
     $("path, circle").hover(function (e) {
       $('#info-box').css('display', 'block');
       $('#info-box').html($(this).data('info'));

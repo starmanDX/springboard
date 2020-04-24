@@ -5,8 +5,8 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms.forms import UserAddForm, UserDeleteForm, UserLocationForm, UserLoginForm
-from models.models import db, connect_db, User, Favorite
+from forms.forms import UserAddForm, UserDeleteForm, UserLocationForm, UserLoginForm, ArticleAddForm
+from models.models import db, connect_db, User, Article
 
 CURR_USER_KEY = "curr_user"
 
@@ -29,7 +29,6 @@ connect_db(app)
 ##############################################################################
 # User signup/login/logout
 
-
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add current user to Flask global."""
@@ -40,12 +39,10 @@ def add_user_to_g():
     else:
         g.user = None
 
-
 def do_login(user):
     """Log in user."""
 
     session[CURR_USER_KEY] = user.id
-
 
 def do_logout():
     """Logout user."""
@@ -57,7 +54,7 @@ def do_logout():
 # Homepage and error pages
 
 # Caches
-requests_cache.install_cache(cache_name="covid_cache", backend='sqlite', expire_after=86400)
+requests_cache.install_cache(cache_name="covid_cache", backend='sqlite', expire_after=3600)
 
 @app.route('/')
 def homepage():
@@ -65,14 +62,39 @@ def homepage():
 
     Render default homepage template.
     """
+    form = ArticleAddForm()
+
     stats_response = requests.get('https://api.smartable.ai/coronavirus/stats/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
     stats_data = stats_response.json()['stats']['breakdowns']
-    news_response = requests.get('https://api.smartable.ai/coronavirus/news/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
-    news_data = news_response.json()['news']
-    print(f'Used Stats Cache: {stats_response.from_cache}')
-    print(f'Used News Cache: {news_response.from_cache}')
-    return render_template('index.html', stats_data=stats_data, news_data=news_data)
 
+    if ('location' in request.args):
+        try:
+            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{request.args["location"]}', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+            news_data = news_response.json()
+
+            return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
+        except:
+            flash(f'No data found for that region.', 'warning')
+
+    if not g.user:
+        news_response = requests.get('https://api.smartable.ai/coronavirus/news/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+        news_data = news_response.json()
+
+        return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
+
+    else:
+        try:
+            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{g.user.location}', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+            news_data = news_response.json()
+
+            return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
+        except:
+            flash(f'No data found for your region. Showing US news.', 'warning')
+            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/US', params={
+                                        "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+            news_data = news_response.json()
+
+            return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
 
 @app.errorhandler(404)
 def show_404(error):
@@ -136,12 +158,11 @@ def login():
     form = UserLoginForm()
 
     if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
-                                 form.password.data)
+        user = User.authenticate(form.username.data, form.password.data)
 
         if user:
             do_login(user)
-            flash(f"Login successful. Welcome back, {user.username}!", "info")
+            flash(f"Login successful. Welcome back, {user.username}.", "success")
             return redirect("/")
 
         flash("Invalid credentials. Please try again.", 'danger')
@@ -159,7 +180,7 @@ def logout():
 
     do_logout()
 
-    flash("You have been successfully logged out!", 'info')
+    flash("You have been successfully logged out.", 'warning')
     return redirect("/")
 
 
@@ -168,26 +189,91 @@ def logout():
 def user_location(username):
     """Handle user location change.
 
-    Update user location in DB and 
+    Update user location in DB and pass new location to homepage redirect.
+
+    If no valid form, present form.
+
+    If invalid credentials, flash user.
     """
 
     form = UserLocationForm()
+
+    if not g.user:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
 
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).one()
         user.location = form.location.data
         db.session.commit()
 
-        flash('Location successfully updated.', 'info')
+        flash('Location successfully updated.', 'warning')
         return redirect('/')
 
     if (g.user.username == username):
-        user = User.query.filter_by(username=username).one()
-        form.location.data = user.location
-        return render_template('users/location.html', user=user, form=form)
+        form.location.data = g.user.location
+        return render_template('users/location.html', user=g.user, form=form)
 
     flash('Unauthorized. Redirected to home page.', 'danger')
     return redirect('/')
+
+# # Add Saved Article Route
+@app.route('/users/<username>/saved-articles', methods=["GET", "POST"])
+def user_saved_articles(username):
+    """Handle add user saved articles.
+
+    """
+
+    form = ArticleAddForm()
+
+    if not g.user:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
+
+    if form.validate_on_submit():
+        Article.save_article(
+            path=form.path.data,
+            location=form.location.data,
+            title=form.title.data,
+            excerpt=form.excerpt.data,
+            image=form.image.data,
+            published_date=form.published_date.data,
+            saved_by=form.saved_by.data,
+        )
+        db.session.commit()
+
+        return "success", 200
+
+    if (g.user.username == username):
+        return render_template('users/location.html', user=g.user)
+
+    flash('Unauthorized. Redirected to home page.', 'danger')
+    return redirect('/')
+
+# # Remove Saved Article Route
+@app.route('/users/<username>/saved-articles', methods=["DELETE"])
+def remove_saved_article(username):
+    """Handle remove user saved articles.
+
+    """
+    if not g.user:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
+
+    if (g.user.username == username):
+        try:
+            path = str(request.data, 'utf-8')[5:].replace(f"%2F", "/")
+            article = Article.query.filter_by(path=path).one()
+            db.session.delete(article)
+            db.session.commit()
+            
+            return "success", 200
+        except:
+            flash('Something went wrong.', 'danger')
+            return redirect('/')
+    else:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
 
 # # Delete User Route
 @app.route('/users/<username>/delete', methods=["GET", "POST"])
@@ -195,6 +281,10 @@ def user_delete(username):
     """Delete a user."""
 
     form = UserDeleteForm()
+
+    if not g.user:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
 
     if form.validate_on_submit():
         user = User.authenticate(g.user.username, form.password.data)
@@ -205,7 +295,7 @@ def user_delete(username):
             db.session.delete(g.user)
             db.session.commit()
 
-            flash('User account successfully deleted.', 'info')
+            flash('User account successfully deleted.', 'warning')
             return redirect("/")
 
         flash("Invalid credentials. Please try again.", 'danger')

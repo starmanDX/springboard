@@ -41,3 +41,14 @@ class UserLoginForm(FlaskForm):
 
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
+
+class ArticleAddForm(FlaskForm):
+    """Form for adding a saved article."""
+
+    path = StringField('Path', validators=[InputRequired()])
+    location = StringField('Location', validators=[InputRequired()])
+    title = StringField('Title', validators=[InputRequired()])
+    excerpt = StringField('Excerpt', validators=[InputRequired()])
+    image = StringField('Image', validators=[InputRequired()])
+    published_date = StringField('Published Date', validators=[InputRequired()])
+    saved_by = StringField('Published Date', validators=[InputRequired()])

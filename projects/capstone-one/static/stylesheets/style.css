@@ -1,7 +1,7 @@
 /* ====================== General */
 
 body {
-  background-color: #e6ecf0;
+  background-color: #ffffff;
 }
 
 .form-control {
@@ -79,7 +79,7 @@ nav form.navbar-form {
 div.border {
   border-width: 3px !important;
   border-radius: 15px;
-  background-color: white;
+  background-color: #f1faff;
 }
 
 h2 + p.lead {
@@ -94,18 +94,27 @@ h2 + p.lead {
   padding: 12px;
 }
 
+#show-map {
+  display:none;
+}
+
 #us-map {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+div img {
+  width: 100%;
+  border-radius: 15px;
+}
+
 path:hover,
 circle:hover {
-  stroke: #007BFF !important;
-  stroke-width: 2px;
+  stroke: white !important;
+  stroke-width: 2.5px;
   stroke-linejoin: round;
-  fill: #007BFF !important;
+  fill: darkgreen !important;
   cursor: pointer;
 }
 
