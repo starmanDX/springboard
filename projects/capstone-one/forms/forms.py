@@ -46,9 +46,11 @@ class ArticleAddForm(FlaskForm):
     """Form for adding a saved article."""
 
     path = StringField('Path', validators=[InputRequired()])
+    url = StringField('URL', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     title = StringField('Title', validators=[InputRequired()])
     excerpt = StringField('Excerpt', validators=[InputRequired()])
     image = StringField('Image', validators=[InputRequired()])
+    source = StringField('Source', validators=[InputRequired()])
     published_date = StringField('Published Date', validators=[InputRequired()])
     saved_by = StringField('Published Date', validators=[InputRequired()])

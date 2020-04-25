@@ -35,7 +35,7 @@ class User(db.Model):
         default='US'
     )
 
-    articles = db.relationship('Article')
+    articles = db.relationship('Article', backref="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}>"
@@ -99,6 +99,15 @@ class Article(db.Model):
         nullable=False,
     )
 
+    url = db.Column(
+        db.String,
+        nullable=False,
+    )
+    path = db.Column(
+        db.String,
+        nullable=False,
+    )
+
     location = db.Column(
         db.String,
         nullable=False,
@@ -116,7 +125,6 @@ class Article(db.Model):
 
     image = db.Column(
         db.String,
-        nullable=False,
     )
 
     published_date = db.Column(
@@ -125,24 +133,45 @@ class Article(db.Model):
         default=datetime.utcnow(),
     )
 
+    source = db.Column(
+        db.String,
+        nullable=False,
+    )
+
     saved_by = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
     )
 
-    user = db.relationship('User')
+    def serialize(self):
+        """Serialize article to a dict"""
+
+        return {
+            'id': self.id,
+            'path': self.path,
+            'url': self.url,
+            'location': self.location,
+            'title': self.title,
+            'excerpt': self.excerpt,
+            'image': self.image,
+            'source': self.source,
+            'published_date': self.published_date,
+            'saved_by': self.saved_by,
+        }
 
     @classmethod
-    def save_article(cls, path, location, title, excerpt, image, published_date, saved_by):
+    def save_article(cls, path, url, location, title, excerpt, image, source, published_date, saved_by):
         """Add a saved article to the DB."""
 
         article = Article(
             path=path,
+            url=url,
             location=location,
             title=title,
             excerpt=excerpt,
             image=image,
+            source=source,
             published_date=published_date,
             saved_by=saved_by
         )

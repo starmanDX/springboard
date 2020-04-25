@@ -1,10 +1,9 @@
 import os
 import requests
 import requests_cache
-from flask import Flask, render_template, request, flash, redirect, session, g
-from flask_debugtoolbar import DebugToolbarExtension
+from flask import Flask, jsonify, render_template, request, flash, redirect, session, g
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import asc, desc
 from forms.forms import UserAddForm, UserDeleteForm, UserLocationForm, UserLoginForm, ArticleAddForm
 from models.models import db, connect_db, User, Article
 
@@ -20,14 +19,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 # app configs
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
+
 
 @app.before_request
 def add_user_to_g():
@@ -39,10 +37,12 @@ def add_user_to_g():
     else:
         g.user = None
 
+
 def do_login(user):
     """Log in user."""
 
     session[CURR_USER_KEY] = user.id
+
 
 def do_logout():
     """Logout user."""
@@ -53,8 +53,11 @@ def do_logout():
 ##############################################################################
 # Homepage and error pages
 
+
 # Caches
-requests_cache.install_cache(cache_name="covid_cache", backend='sqlite', expire_after=3600)
+requests_cache.install_cache(
+    cache_name="covid_cache", backend='sqlite', expire_after=3600)
+
 
 @app.route('/')
 def homepage():
@@ -64,12 +67,14 @@ def homepage():
     """
     form = ArticleAddForm()
 
-    stats_response = requests.get('https://api.smartable.ai/coronavirus/stats/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+    stats_response = requests.get('https://api.smartable.ai/coronavirus/stats/US', params={
+                                  "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
     stats_data = stats_response.json()['stats']['breakdowns']
 
     if ('location' in request.args):
         try:
-            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{request.args["location"]}', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{request.args["location"]}', params={
+                                         "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
             news_data = news_response.json()
 
             return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
@@ -77,24 +82,27 @@ def homepage():
             flash(f'No data found for that region.', 'warning')
 
     if not g.user:
-        news_response = requests.get('https://api.smartable.ai/coronavirus/news/US', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+        news_response = requests.get('https://api.smartable.ai/coronavirus/news/US', params={
+                                     "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
         news_data = news_response.json()
 
         return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
 
     else:
         try:
-            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{g.user.location}', params={"Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+            news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/{g.user.location}', params={
+                                         "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
             news_data = news_response.json()
 
             return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
         except:
             flash(f'No data found for your region. Showing US news.', 'warning')
             news_response = requests.get(f'https://api.smartable.ai/coronavirus/news/US', params={
-                                        "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
+                "Subscription-Key": "ce460928bcb14a85a359364b1fa315f3", "cache-control": "public, max-age=3600, max-stale=3600"})
             news_data = news_response.json()
 
             return render_template('index.html', form=form, stats_data=stats_data, news_data=news_data)
+
 
 @app.errorhandler(404)
 def show_404(error):
@@ -162,7 +170,8 @@ def login():
 
         if user:
             do_login(user)
-            flash(f"Login successful. Welcome back, {user.username}.", "success")
+            flash(
+                f"Login successful. Welcome back, {user.username}.", "success")
             return redirect("/")
 
         flash("Invalid credentials. Please try again.", 'danger')
@@ -233,10 +242,12 @@ def user_saved_articles(username):
     if form.validate_on_submit():
         Article.save_article(
             path=form.path.data,
+            url=form.url.data,
             location=form.location.data,
             title=form.title.data,
             excerpt=form.excerpt.data,
             image=form.image.data,
+            source=form.source.data,
             published_date=form.published_date.data,
             saved_by=form.saved_by.data,
         )
@@ -245,10 +256,35 @@ def user_saved_articles(username):
         return "success", 200
 
     if (g.user.username == username):
-        return render_template('users/location.html', user=g.user)
+        return render_template('users/saved-articles.html', user=g.user)
 
     flash('Unauthorized. Redirected to home page.', 'danger')
     return redirect('/')
+
+# # Sort Saved Article Route
+@app.route('/users/<username>/saved-articles', methods=["PATCH"])
+def sort_saved_article(username):
+    """Handle sort user saved articles.
+
+    """
+    if not g.user:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
+
+    if (g.user.username == username):
+        sort_type = str(request.data[5:-4], 'utf-8').replace("-","")
+        sort_dir = str(request.data, 'utf-8')[-4:].replace("-", "")
+        if (sort_dir == 'asc'):
+            data = Article.query.filter_by(saved_by=g.user.id).order_by(
+                asc(getattr(Article, sort_type))).all()
+        if (sort_dir == 'desc'):
+            data = Article.query.filter_by(saved_by=g.user.id).order_by(
+                desc(getattr(Article, sort_type))).all()
+        data = [i.serialize() for i in data]
+        return jsonify(data=data)
+    else:
+        flash('Unauthorized. Redirected to home page.', 'danger')
+        return redirect('/')
 
 # # Remove Saved Article Route
 @app.route('/users/<username>/saved-articles', methods=["DELETE"])
@@ -266,7 +302,7 @@ def remove_saved_article(username):
             article = Article.query.filter_by(path=path).one()
             db.session.delete(article)
             db.session.commit()
-            
+
             return "success", 200
         except:
             flash('Something went wrong.', 'danger')
@@ -275,7 +311,7 @@ def remove_saved_article(username):
         flash('Unauthorized. Redirected to home page.', 'danger')
         return redirect('/')
 
-# # Delete User Route
+# # Delete User View Route
 @app.route('/users/<username>/delete', methods=["GET", "POST"])
 def user_delete(username):
     """Delete a user."""

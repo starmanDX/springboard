@@ -10,6 +10,7 @@ body {
 
 .btn {
   border-radius: 50px;
+  box-shadow: none !important;
 }
 
 .btn:hover {
@@ -94,9 +95,7 @@ h2 + p.lead {
   padding: 12px;
 }
 
-#show-map {
-  display:none;
-}
+
 
 #us-map {
   display: block;

@@ -19,7 +19,7 @@
   <button id="hide-map-btn" class="btn btn-primary mt-2">Hide Map</button>
 </div>
 <div id="show-map" class="text-center">
-  <button id="show-map-btn" class="btn btn-primary mt-2">Show State Selection Map</button>
+  <button id="show-map-btn" class="d-none btn btn-primary mt-2">Show State Selection Map</button>
 </div>
 <hr>
 <div id="news-output">
@@ -38,6 +38,7 @@
           <form class="save-article-form" action="/users/{{g.user.username}}/saved-articles" method="POST">
             {{ form.hidden_tag() }}
             <input type="hidden" name="path" value="{{item.path}}">
+            <input type="hidden" name="url" value="{{item.webUrl}}">
             {% if not news_data.location.provinceOrState %}
               <input type="hidden" name="location" value="{{news_data.location.countryOrRegion}}">
             {% else %}
@@ -47,7 +48,10 @@
             <input type="hidden" name="excerpt" value="{{item.excerpt}}">
             {% if item.images %}
               <input type="hidden" name="image" value="{{item.images[0].url}}">
+            {% else %}
+              <input type="hidden" name="image" value="/static/images/no-image.jpg">
             {% endif %}
+            <input type="hidden" name="source" value="{{item.provider.name}}">
             <input type="hidden" name="published_date" value="{{item.publishedDateTime}}">
             <input type="hidden" name="saved_by" value="{{g.user.id}}">
             {% if g.user.has_saved_article(item.path) %}
@@ -64,7 +68,8 @@
           <img src="{{item.images[0].url}}" alt="{{item.images[0].title}}" class="mb-3">
         {% endif %}
         <h3><a href="{{item.webUrl}}">{{item.title}}</a></h3>
-        <p>Publish Date: {{ item.publishedDateTime}}</p>
+        <p class="m-0"><strong>Publish Date:</strong> {{ item.publishedDateTime}}</p>
+        <p><strong>Source:</strong> {{item.provider.name}}</p>
         <p class="lead">{{item.excerpt}}</p>
       </div>
     </div>

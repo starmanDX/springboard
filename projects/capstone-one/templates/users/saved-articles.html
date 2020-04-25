@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h2 class="text-center">Saved Articles for {{user.username}}</h2>
+  <hr>
+  {% if user.articles %}
+  <div id="sort-btns" class='text-center'>
+    <button id="sort-location" data-sort="location" class="sort-off btn btn-outline-primary btn-sm mb-3">Sort by Location</button>
+    <button id="sort-date" data-sort="published_date" class="sort-off btn btn-outline-primary btn-sm mb-3">Sort by Publish Date</button>
+    <button id="sort-source" data-sort="source" class="sort-off btn btn-outline-primary btn-sm mb-3">Sort by Source</button>
+  </div>
+  <div id="saved-news-output">
+    {% for item in user.articles %}
+      <div class="justify-content-center p-2 border border-primary mb-5">
+        <button data-path="{{item.path}}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+            class="far fa-bookmark"></i> Remove from Saved Articles</button>
+        <div class="text-dark mt-3">
+          {% if item.image %}
+            <img src="{{item.image}}" alt="{{item.title}}" class="mb-3">
+          {% endif %}
+          <h3><a href="{{item.url}}">{{item.title}}</a></h3>
+          <p class="m-0"><strong>Location:</strong> {{item.location}}</p>
+          <p class="m-0"><strong>Publish Date:</strong> {{ item.published_date}}</p>
+          <p><strong>Source:</strong> {{item.source}}</p>
+          <p class="lead">{{item.excerpt}}</p>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="lead text-center">You have no saved articles yet.</p>
+  {% endif %}
+</div>
+
+
+{% endblock content %}
