@@ -1,40 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if not g.user %}
-  <div class="row justify-content-center border border-primary">
-    <div class="text-dark text-center mt-5">
-      <h1>COVID-19 Stats & News</h1>
-      <p class="lead">Get the latest news and statistics for COVID-19 in the United States.</p>
-      <h2 class="h4">New to the site?</h2>
-      <p class="lead">Sign up now to get your own personalized timeline.</p>
-      <a href="/signup" class="btn btn-primary mb-5">Sign up</a>
+  {% if not g.user %}
+    <div class="row justify-content-center border border-primary">
+      <div class="text-dark text-center mt-5">
+        <h1>COVID-19 Stats & News</h1>
+        <p class="lead">Get the latest news and statistics for COVID-19 in the United States.</p>
+        <h2 class="h4">New to the site?</h2>
+        <p class="lead">Sign up now to get your own personalized timeline.</p>
+        <a href="/signup" class="btn btn-primary mb-5">Sign up</a>
+      </div>
     </div>
+    <hr>
+  {% endif %}
+  <div id="state-select" class="text-center">
+    <h2>Select a State</h2>
+    <p class="lead">Hover to see case statistics or click to view news articles related to that region.</p>
+    {% include "map.html" %}
+    <button id="hide-map-btn" class="btn btn-primary mt-2">Hide Map</button>
+  </div>
+  <div id="show-map" class="text-center">
+    <button id="show-map-btn" class="d-none btn btn-primary mt-2">Show State Selection Map</button>
   </div>
   <hr>
-{% endif %}
-<div id="state-select" class="text-center">
-  <h2>Select a State</h2>
-  <p class="lead">Hover to see case statistics or click to view news articles related to that region.</p>
-  {% include "map.html" %}
-  <button id="hide-map-btn" class="btn btn-primary mt-2">Hide Map</button>
-</div>
-<div id="show-map" class="text-center">
-  <button id="show-map-btn" class="d-none btn btn-primary mt-2">Show State Selection Map</button>
-</div>
-<hr>
-<div id="news-output">
-  <h2 class="text-center">
-    {% if not news_data.location.provinceOrState %}
-      United States News
-    {% else %}
-      {{news_data.location.provinceOrState}} News
-    {% endif %}
-  </h2>
-  <p class="lead text-center">Here are the latest COVID-19 related news articles for the region. Toggle the bookmark
-    button next to an article to save it to your personal list.</p>
-  {% for item in news_data['news'] %}
-    <div class="justify-content-center p-2 border border-primary mb-5">
-      {% if g.user %}
+  <div id="news-output">
+    <h2 class="text-center">
+      {% if not news_data.location.provinceOrState %}
+        United States News
+      {% else %}
+        {{news_data.location.provinceOrState}} News
+      {% endif %}
+    </h2>
+    <p class="lead text-center">Here are the latest COVID-19 related news articles for the region. Toggle the bookmark
+      button next to an article to save it to your personal list.</p>
+    {% for item in news_data['news'] %}
+      <div class="justify-content-center p-2 border border-primary mb-5">
+        {% if g.user %}
           <form class="save-article-form" action="/users/{{g.user.username}}/saved-articles" method="POST">
             {{ form.hidden_tag() }}
             <input type="hidden" name="path" value="{{item.path}}">
@@ -49,32 +49,34 @@
             {% if item.images %}
               <input type="hidden" name="image" value="{{item.images[0].url}}">
             {% else %}
-              <input type="hidden" name="image" value="/static/images/no-image.jpg">
+              <input type="hidden" name="image" value="">
             {% endif %}
             <input type="hidden" name="source" value="{{item.provider.name}}">
             <input type="hidden" name="published_date" value="{{item.publishedDateTime}}">
             <input type="hidden" name="saved_by" value="{{g.user.id}}">
             {% if g.user.has_saved_article(item.path) %}
-              <button data-path="{{item.path}}" class="remove-article-btn float-right btn btn-primary btn-sm mb-2"><i class="far fa-bookmark"></i> Remove from Saved Articles</button>
-              <button class="d-none save-article-btn float-right btn btn-outline-primary btn-sm mb-2"><i class="far fa-bookmark"></i> Add to Saved Articles</button>
+              <button data-path="{{item.path}}" class="remove-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                  class="far fa-bookmark"></i> Remove from Saved Articles</button>
+              <button class="d-none save-article-btn float-right btn btn-outline-primary btn-sm mb-2"><i
+                  class="far fa-bookmark"></i> Add to Saved Articles</button>
             {% else %}
-              <button data-path="{{item.path}}" class="d-none remove-article-btn float-right btn btn-primary btn-sm mb-2"><i class="far fa-bookmark"></i> Remove from Saved Articles</button>
-              <button class="save-article-btn float-right btn btn-outline-primary btn-sm mb-2"><i class="far fa-bookmark"></i> Add to Saved Articles</button>
+              <button data-path="{{item.path}}" class="d-none remove-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                  class="far fa-bookmark"></i> Remove from Saved Articles</button>
+              <button class="save-article-btn float-right btn btn-outline-primary btn-sm mb-2"><i class="far fa-bookmark"></i>
+                Add to Saved Articles</button>
             {% endif %}
           </form>
-      {% endif %}
-      <div class="text-dark mt-3">
-        {% if item.images %}
-          <img src="{{item.images[0].url}}" alt="{{item.images[0].title}}" class="mb-3">
         {% endif %}
-        <h3><a href="{{item.webUrl}}">{{item.title}}</a></h3>
-        <p class="m-0"><strong>Publish Date:</strong> {{ item.publishedDateTime}}</p>
-        <p><strong>Source:</strong> {{item.provider.name}}</p>
-        <p class="lead">{{item.excerpt}}</p>
+        <div class="text-dark mt-3">
+          {% if item.images %}
+            <img src="{{item.images[0].url}}" alt="{{item.images[0].title}}" class="mb-3">
+          {% endif %}
+          <h3><a href="{{item.webUrl}}">{{item.title}}</a></h3>
+          <p class="m-0"><strong>Publish Date:</strong> {{ item.publishedDateTime}}</p>
+          <p><strong>Source:</strong> {{item.provider.name}}</p>
+          <p class="lead">{{item.excerpt}}</p>
+        </div>
       </div>
-    </div>
-  {% endfor %}
-</div>
-
-
+    {% endfor %}
+  </div>
 {% endblock content %}

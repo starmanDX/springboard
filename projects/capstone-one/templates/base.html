@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
@@ -9,7 +8,6 @@
   <link rel="shortcut icon" href="/static/favicon.ico">
   <title>COVID-19 Stats & News</title>
 </head>
-
 <body>
   <nav class="navbar navbar-dark bg-dark navbar-expand">
     <div class="container-fluid">
@@ -21,48 +19,46 @@
       </div>
       <ul class="nav navbar-nav navbar-right">
         {% if not g.user %}
-        <li><a href="/signup"><i class="fas fa-user-plus"></i> Sign up</a></li>
-        <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
+          <li><a href="/signup"><i class="fas fa-user-plus"></i> Sign up</a></li>
+          <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
         {% else %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-cog"></i> {{ g.user.username }} ({{g.user.location}})
-          </a>
-          <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/users/{{g.user.username}}/saved-articles"><i class="far fa-bookmark"></i>
-              View Saved Articles</a>
-            <a class="dropdown-item" href="/users/{{g.user.username}}/location"><i class="far fa-compass"></i> Change
-              Location</a>
-            <a class="dropdown-item" href="/users/{{g.user.username}}/delete"><i class="fas fa-user-times"></i> Delete
-              Account</a>
-          </div>
-        </li>
-        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-user-cog"></i> {{ g.user.username }} ({{g.user.location}})
+            </a>
+            <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/users/{{g.user.username}}/saved-articles"><i class="far fa-bookmark"></i>
+                View Saved Articles</a>
+              <a class="dropdown-item" href="/users/{{g.user.username}}/location"><i class="far fa-compass"></i> Change
+                Location</a>
+              <a class="dropdown-item" href="/users/{{g.user.username}}/delete"><i class="fas fa-user-times"></i> Delete
+                Account</a>
+            </div>
+          </li>
+          <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
         {% endif %}
       </ul>
     </div>
   </nav>
   <div class="container">
     {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
+      <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
-
     {% block content %}
     {% endblock content %}
-
   </div>
   <script src="https://unpkg.com/jquery"></script>
   <script src="https://unpkg.com/bootstrap"></script>
   <script>
     $("#hide-map-btn, #show-map-btn").click(function (e) {
-      $("#state-select, #hide-map-btn, #show-map-btn").toggleClass("d-none")
-    })
+      $("#state-select, #hide-map-btn, #show-map-btn").toggleClass("d-none");
+    });
 
     $('.save-article-form').submit(function (e) {
       e.preventDefault();
-      $(this).children('button').first().toggleClass('d-none')
-      $(this).children('button').last().toggleClass('d-none')
+      $(this).children('button').first().toggleClass('d-none');
+      $(this).children('button').last().toggleClass('d-none');
     })
 
     $('.save-article-btn').click(function (e) {
@@ -70,8 +66,8 @@
         url: '/users/{{g.user.username}}/saved-articles',
         type: "POST",
         data: $(this).parent().serialize()
-      })
-    })
+      });
+    });
 
     $('.remove-article-btn').click(function (e) {
       $.ajax({
@@ -82,40 +78,41 @@
         },
         contentType: "application/json",
         dataType: "text"
-      })
-    })
+      });
+    });
 
     $('#saved-news-output').click(function (e) {
-      $.ajax({
+      if($(e.target).hasClass('clear-article-btn')) {
+        $.ajax({
         url: '/users/{{g.user.username}}/saved-articles',
         type: "DELETE",
         data: {
-          "path": $(e.target).data('path')
+        "path": $(e.target).data('path')
         },
         contentType: "application/json",
         dataType: "text"
-      })
-      $(e.target).parent().remove()
-      console.log($('#saved-news-output').html())
+        });
+        $(e.target).parent().remove()
+      }
       if ($('#saved-news-output').children().length == 0) {
         $('#sort-btns').remove()
         $('#saved-news-output').append('<p class="lead text-center">You have no saved articles yet.</p>')
       }
-    })
+    });
 
     $('#sort-location, #sort-date, #sort-source').click(function (e) {
       if ($(this).hasClass('sort-off')) {
         if ($(this).siblings().hasClass('sort-asc')) {
           $(this).siblings('.sort-asc').toggleClass('sort-asc sort-off btn-primary btn-outline-primary')
-            .children().remove()
+            .children().remove();
         }
         if ($(this).siblings().hasClass('sort-desc')) {
           $(this).siblings('.sort-desc').toggleClass('sort-desc sort-off btn-primary btn-outline-primary')
-            .children().remove()
+            .children().remove();
         }
         $(this).toggleClass('sort-off sort-asc btn-outline-primary btn-primary');
-        let text = $(this).text()
-        $(this).html('<i class="fas fa-sort-up"></i> ' + text)
+        let text = $(this).text();
+        $(this).html('<i class="fas fa-sort-up"></i> ' + text);
 
         $.ajax({
           url: '/users/{{g.user.username}}/saved-articles',
@@ -128,29 +125,44 @@
           success: function (data) {
             $('#saved-news-output').empty()
             for (item of data.data) {
-              let html = `<div class="justify-content-center p-2 border border-primary mb-5">
-                            <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
-                              class="far fa-bookmark"></i> Remove from Saved Articles</button>
-                            <div class="text-dark mt-3">
-                            <img src="${item.image}" alt="${item.title}" class="mb-3">
-                            <h3><a href="${item.url}">${item.title}</a></h3>
-                            <p class="m-0"><strong>Location:</strong> ${item.location}</p>
-                            <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
-                            <p><strong>Source:</strong> ${item.source}</p>
-                            <p class="lead">${item.excerpt}</p>
-                            </div>
-                          </div>`
-              $('#saved-news-output').append(html)
+              if (!item.image) {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                    <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                        class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                    <div class="text-dark mt-3">
+                      <h3><a href="${item.url}">${item.title}</a></h3>
+                      <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                      <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                      <p><strong>Source:</strong> ${item.source}</p>
+                      <p class="lead">${item.excerpt}</p>
+                    </div>
+                  </div>`
+                $('#saved-news-output').append(html);
+              }
+              else {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                    <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                        class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                    <div class="text-dark mt-3">
+                      <img src="${item.image}" alt="${item.title}" class="mb-3">
+                      <h3><a href="${item.url}">${item.title}</a></h3>
+                      <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                      <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                      <p><strong>Source:</strong> ${item.source}</p>
+                      <p class="lead">${item.excerpt}</p>
+                    </div>
+                  </div>`
+                $('#saved-news-output').append(html);
+              }
             }
           }
-        })
-
+        });
         return
       }
       if ($(this).hasClass('sort-asc')) {
         $(this).toggleClass('sort-desc sort-asc');
-        let text = $(this).text()
-        $(this).html('<i class="fas fa-sort-down"></i> ' + text)
+        let text = $(this).text();
+        $(this).html('<i class="fas fa-sort-down"></i> ' + text);
 
         $.ajax({
           url: '/users/{{g.user.username}}/saved-articles',
@@ -163,29 +175,44 @@
           success: function (data) {
             $('#saved-news-output').empty()
             for (item of data.data) {
-              let html = `<div class="justify-content-center p-2 border border-primary mb-5">
-          <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
-              class="far fa-bookmark"></i> Remove from Saved Articles</button>
-          <div class="text-dark mt-3">
-            <img src="${item.image}" alt="${item.title}" class="mb-3">
-            <h3><a href="${item.url}">${item.title}</a></h3>
-            <p class="m-0"><strong>Location:</strong> ${item.location}</p>
-            <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
-            <p><strong>Source:</strong> ${item.source}</p>
-            <p class="lead">${item.excerpt}</p>
-          </div>
-        </div>`
-              $('#saved-news-output').append(html)
+              if (!item.image) {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                    <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                        class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                    <div class="text-dark mt-3">
+                      <h3><a href="${item.url}">${item.title}</a></h3>
+                      <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                      <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                      <p><strong>Source:</strong> ${item.source}</p>
+                      <p class="lead">${item.excerpt}</p>
+                    </div>
+                  </div>`
+                $('#saved-news-output').append(html);
+              }
+              else {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                    <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                        class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                    <div class="text-dark mt-3">
+                      <img src="${item.image}" alt="${item.title}" class="mb-3">
+                      <h3><a href="${item.url}">${item.title}</a></h3>
+                      <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                      <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                      <p><strong>Source:</strong> ${item.source}</p>
+                      <p class="lead">${item.excerpt}</p>
+                    </div>
+                  </div>`
+                $('#saved-news-output').append(html);
+              }
             }
           }
-        })
-
+        });
         return
       }
       if ($(this).hasClass('sort-desc')) {
         $(this).toggleClass('sort-desc sort-asc');
-        let text = $(this).text()
-        $(this).html('<i class="fas fa-sort-up"></i> ' + text)
+        let text = $(this).text();
+        $(this).html('<i class="fas fa-sort-up"></i> ' + text);
 
         $.ajax({
           url: '/users/{{g.user.username}}/saved-articles',
@@ -198,26 +225,41 @@
           success: function (data) {
             $('#saved-news-output').empty()
             for (item of data.data) {
-              let html = `<div class="justify-content-center p-2 border border-primary mb-5">
-          <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
-              class="far fa-bookmark"></i> Remove from Saved Articles</button>
-          <div class="text-dark mt-3">
-            <img src="${item.image}" alt="${item.title}" class="mb-3">
-            <h3><a href="${item.url}">${item.title}</a></h3>
-            <p class="m-0"><strong>Location:</strong> ${item.location}</p>
-            <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
-            <p><strong>Source:</strong> ${item.source}</p>
-            <p class="lead">${item.excerpt}</p>
-          </div>
-        </div>`
-              $('#news-output').append(html)
+              if(!item.image) {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                  <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                    class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                  <div class="text-dark mt-3">
+                    <h3><a href="${item.url}">${item.title}</a></h3>
+                    <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                    <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                    <p><strong>Source:</strong> ${item.source}</p>
+                    <p class="lead">${item.excerpt}</p>
+                  </div>
+                </div>`
+              $('#saved-news-output').append(html);
+              }
+              else {
+                let html = `<div class="justify-content-center p-2 border border-primary mb-5">
+                  <button data-path="${item.path}" class="clear-article-btn float-right btn btn-primary btn-sm mb-2"><i
+                    class="far fa-bookmark"></i> Remove from Saved Articles</button>
+                  <div class="text-dark mt-3">
+                    <img src="${item.image}" alt="${item.title}" class="mb-3">
+                    <h3><a href="${item.url}">${item.title}</a></h3>
+                    <p class="m-0"><strong>Location:</strong> ${item.location}</p>
+                    <p class="m-0"><strong>Publish Date:</strong> ${ item.published_date}</p>
+                    <p><strong>Source:</strong> ${item.source}</p>
+                    <p class="lead">${item.excerpt}</p>
+                  </div>
+                </div>`
+              $('#saved-news-output').append(html);
+              }
             }
           }
-        })
-
+        });
         return
       }
-    })
+    });
 
     $("path, circle").hover(function (e) {
       $('#info-box').css('display', 'block');
@@ -243,5 +285,4 @@
     }
   </script>
 </body>
-
 </html>

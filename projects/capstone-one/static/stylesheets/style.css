@@ -17,6 +17,21 @@ body {
   cursor: pointer;
 }
 
+div.border {
+  border-width: 3px !important;
+  border-radius: 15px;
+  background-color: #f1faff;
+}
+
+h2+p.lead {
+  font-size: 1.1rem;
+}
+
+div img {
+  width: 100%;
+  border-radius: 15px;
+}
+
 /* ======================= Nav */
 
 .navbar {
@@ -74,19 +89,6 @@ nav form.navbar-form {
   position: relative;
 }
 
-
-/* ============================ Signed out home */
-
-div.border {
-  border-width: 3px !important;
-  border-radius: 15px;
-  background-color: #f1faff;
-}
-
-h2 + p.lead {
-  font-size: 1.1rem;
-}
-
 /* ========================== Signup/Login */
 
 #user_form input.form-control {
@@ -95,17 +97,12 @@ h2 + p.lead {
   padding: 12px;
 }
 
-
+/* ========================== Map */
 
 #us-map {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-div img {
-  width: 100%;
-  border-radius: 15px;
 }
 
 path:hover,

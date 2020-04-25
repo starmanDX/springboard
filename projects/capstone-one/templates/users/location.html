@@ -1,25 +1,19 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
-<div class="row justify-content-md-center">
-  <div class="col-8 col-lg-6 m-auto">
-    <h1>Change Location</h1>
-    <p class="lead">Choose a new location below to change the default location filter for articles on the main page. </p>
-
-    <form method="POST" id="user_form">
-      {{ form.hidden_tag() }}
-
-      {% for field in form if field.widget.input_type != 'hidden' %}
-      {% for error in field.errors %}
-      <span class="text-danger">{{ error }}</span>
-      {% endfor %}
-      {{ field(value=form.location, class="form-control") }}
-      {% endfor %}
-
-      <button class="btn btn-primary btn-block btn-lg">Update Location</button>
-    </form>
+  <div class="row justify-content-md-center">
+    <div class="col-8 col-lg-6 m-auto">
+      <h1>Change Location</h1>
+      <p class="lead">Choose a new location below to change the default location filter for articles on the main page. </p>
+      <form method="POST" id="user_form">
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+          {{ field(value=form.location, class="form-control") }}
+        {% endfor %}
+        <button class="btn btn-primary btn-block btn-lg">Update Location</button>
+      </form>
+    </div>
   </div>
-</div>
-
 {% endblock %}
