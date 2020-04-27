@@ -129,19 +129,20 @@ def signup():
     # Create new user, add to database, login, then redirect to homepage. Flash
     # user if username is already taken and re-present form. If no valid form,
     # present form.
-    if form.validate_on_submit():
-        try:
-            user = User.signup(
-                username=form.username.data, password=form.password.data, location=form.location.data)
-            db.session.commit()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            try:
+                user = User.signup(
+                    username=form.username.data, password=form.password.data, location=form.location.data)
+                db.session.commit()
 
-        except IntegrityError:
-            flash("Username already taken. Please choose another.", 'danger')
-            return render_template('users/signup.html', form=form)
+            except IntegrityError:
+                flash("Username already taken. Please choose another.", 'danger')
+                return render_template('users/signup.html', form=form)
 
-        do_login(user)
-        flash(f"Signup successful. Welcome {user.username}.", 'success')
-        return redirect("/")
+            do_login(user)
+            flash(f"Signup successful. Welcome {user.username}.", 'success')
+            return redirect("/")
 
     ### GET ROUTE ###
     # Render signup form
@@ -158,16 +159,17 @@ def login():
     ### POST ROUTE ###
     # Log user in and redirect to homepage. If invalid credentials,
     # flash user. Otherwise if no valid form, present form.
-    if form.validate_on_submit():
-        user = User.authenticate(form.username.data, form.password.data)
-        if user:
-            do_login(user)
-            flash(
-                f"Login successful. Welcome back, {user.username}.", "success")
-            return redirect("/")
+    if(request.method=="POST"):
+        if form.validate_on_submit():
+            user = User.authenticate(form.username.data, form.password.data)
+            if user:
+                do_login(user)
+                flash(
+                    f"Login successful. Welcome back, {user.username}.", "success")
+                return redirect("/")
 
-        else:
-            flash("Invalid credentials. Please try again.", 'danger')
+            else:
+                flash("Invalid credentials. Please try again.", 'danger')
 
     ### GET ROUTE ###
     # Render login form
@@ -199,17 +201,21 @@ def user_location(username):
 
     ### POST ROUTE ###
     # Update user location in database and pass new location to homepage redirect.
-    if form.validate_on_submit():
-        try:
-            user = User.query.filter_by(username=username).one()
-            user.location = form.location.data
-            db.session.commit()
-            flash('Location successfully updated.', 'warning')
+    if (request.method == "POST"):
+        if form.validate_on_submit() and g.user.username == username:
+            try:
+                user = User.query.filter_by(username=username).one()
+                user.location = form.location.data
+                db.session.commit()
+                flash('Location successfully updated.', 'warning')
 
-        except:
-            flash('Something went wrong.', 'danger')
+            except:
+                flash('Something went wrong.', 'danger')
 
-        return redirect('/')
+            return redirect('/')
+        else:
+            flash('Unauthorized. Redirected to home page.', 'danger')
+            return redirect('/')
 
     ### GET ROUTE ###
     # If logged in user matches passed username, render form. Otherwise, flash user.
@@ -235,7 +241,7 @@ def user_delete(username):
     ### POST ROUTE ###
     # Find passed user in database and check against logged in user. If
     #  authenticated, logout and delete user. Otherwise, flash user.
-    if form.validate_on_submit():
+    if form.validate_on_submit() and g.user.username == username:
         user = User.authenticate(g.user.username, form.password.data)
         if user:
             try:
@@ -256,13 +262,7 @@ def user_delete(username):
     # If logged in user matches passed username, find passed user in
     # the database and pass it to the form. Otherwise, flash user.
     if (g.user.username == username):
-        try:
-            user = User.query.filter_by(username=username).one()
-
-        except:
-            flash('Something went wrong.', 'danger')
-            return redirect('/')
-
+        user = User.query.filter_by(username=username).one()
         return render_template('users/delete.html', user=user, form=form)
 
     flash("Unauthorized. Redirected to home page.", "danger")
@@ -286,7 +286,7 @@ def user_saved_articles(username):
 
     ### POST ROUTE ###
     # If valid form, add saved article to database.
-    if form.validate_on_submit():
+    if form.validate_on_submit() and g.user.username == username:
         try:
             Article.save_article(
                 path=form.path.data, url=form.url.data, location=form.location.data,
@@ -309,7 +309,7 @@ def user_saved_articles(username):
 
 # Sort Saved Article Route
 @app.route('/users/<username>/saved-articles', methods=["PATCH"])
-def sort_saved_article(username):
+def sort_saved_articles(username):
     """Handle sort user saved articles."""
 
     # If no logged in user, redirect.
