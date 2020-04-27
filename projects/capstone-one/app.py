@@ -113,7 +113,7 @@ def homepage():
 def show_404(error):
     """Handle 404 errors."""
 
-    return render_template('404.html')
+    return render_template('404.html'), 404
 
 ##############################################################################
 # General User Routes:
