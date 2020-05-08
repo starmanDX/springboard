@@ -80,7 +80,7 @@ You should turn in:
 If you were given an add function:
 
 add.js
-/\*_ Given two numbers, add positive versions of them together. _/
+    /\*_ Given two numbers, add positive versions of them together. _/
 
     function addAbsoluteVals(x, y) {
     return Math.abs(x) + y;
@@ -115,7 +115,7 @@ bugs.md - BUG #1: add() doesn't add positive version of y
 Then fix the code and document the fix in a comment:
 
 add.js
-/\*_ Given two numbers, add positive versions of them together. _/
+    /\*_ Given two numbers, add positive versions of them together. _/
 
     function addAbsoluteVals(x, y) {
     // FIXES BUG #1
