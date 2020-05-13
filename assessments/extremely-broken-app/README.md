@@ -111,8 +111,9 @@ You could write a test that fails, proving a bug exists:
 
 Then document the bug in your markdown file:
 
-bugs.md - BUG #1: add() doesn't add positive version of y
-Then fix the code and document the fix in a comment:
+bugs.md
+    BUG #1: add() doesn't add positive version of y
+    Then fix the code and document the fix in a comment:
 
 add.js
     /\*_ Given two numbers, add positive versions of them together. _/
