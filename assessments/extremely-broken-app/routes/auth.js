@@ -12,7 +12,7 @@ const createTokenForUser = require('../helpers/createToken');
  *
  *  Returns {token: jwt-token-string}.
  *
- *  If incorrect username/password given, should raise 401.
+ *  If incorrect username/password given, should raise 400.
  *
  */
 
@@ -40,7 +40,8 @@ router.post('/register', async function(req, res, next) {
 router.post('/login', async function(req, res, next) {
   try {
     const { username, password } = req.body;
-    let user = User.authenticate(username, password);
+    // FIXES BUG #1 - ADD MISSING AWAIT
+    let user = await User.authenticate(username, password);
     const token = createTokenForUser(username, user.admin);
     return res.json({ token });
   } catch (err) {

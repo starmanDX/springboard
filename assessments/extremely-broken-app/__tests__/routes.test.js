@@ -90,12 +90,41 @@ describe("POST /auth/login", function() {
     expect(username).toBe("u1");
     expect(admin).toBe(false);
   });
+  
+  //TESTS BUG #1
+  test("should not allow an incorrect username/password to log in", async function() {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        username: "u1",
+        password: "INCORRECTPASSWORD"
+      });
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toEqual({
+      "status": 401,
+      "message": "Cannot authenticate"
+    });
+  });
 });
 
 describe("GET /users", function() {
   test("should deny access if no token provided", async function() {
     const response = await request(app).get("/users");
     expect(response.statusCode).toBe(401);
+  });
+
+  // TESTS BUG #2
+  test("should deny access if bad token provided", async function () {
+    const response = await request(app)
+      .get("/users")
+      .send({
+        _token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InUxIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1ODk0MTM5OTF9.qjsIcoxhlQMzfLiyQ1XSrIhmq8GdOictRC_PMIsun2i"
+      });
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toEqual({
+      "status": 401,
+      "message": "invalid signature"
+    });
   });
 
   test("should list all users", async function() {
@@ -126,6 +155,18 @@ describe("GET /users/[username]", function() {
       phone: "phone1"
     });
   });
+
+  // TEST BUG #3
+  test("should return an error on unknown user", async function() {
+    const response = await request(app)
+      .get("/users/FAKEUSER")
+      .send({ _token: tokens.u1 });
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toEqual({
+      "status": 404,
+      "message": "No such user"
+    });
+  });
 });
 
 describe("PATCH /users/[username]", function() {
@@ -145,6 +186,24 @@ describe("PATCH /users/[username]", function() {
     const response = await request(app)
       .patch("/users/u1")
       .send({ _token: tokens.u3, first_name: "new-fn1" }); // u3 is admin
+    expect(response.statusCode).toBe(200);
+    expect(response.body.user).toEqual({
+      username: "u1",
+      first_name: "new-fn1",
+      last_name: "ln1",
+      email: "email1",
+      phone: "phone1",
+      admin: false,
+      password: expect.any(String)
+    });
+  });
+
+  // TESTS BUG #4
+  // COULDN'T FIND FIX FOR THIS THAT DIDN'T BREAK OTHER FUNCTIONALITY
+  test("should patch data if logged in user matches patched user", async function() {
+    const response = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u1, first_name: "new-fn1" });
     expect(response.statusCode).toBe(200);
     expect(response.body.user).toEqual({
       username: "u1",
@@ -191,6 +250,17 @@ describe("DELETE /users/[username]", function() {
       .send({ _token: tokens.u3 }); // u3 is admin
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "deleted" });
+  });
+
+  test("should throw error if unknown user", async function() {
+    const response = await request(app)
+      .delete("/users/FAKEUSER")
+      .send({ _token: tokens.u3 }); // u3 is admin
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toEqual({
+      "status": 404,
+      "message": "No such user"
+    });
   });
 });
 
