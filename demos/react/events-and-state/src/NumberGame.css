@@ -1,0 +1,14 @@
+.NumberGame {
+    border: 1px solid black;
+    width: 300px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.NumberGame-winner {
+    color: green
+}
+
+.NumberGame-loser {
+    color: red;
+}
