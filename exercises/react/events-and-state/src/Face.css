@@ -1,0 +1,16 @@
+.Face {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    background-color: white;
+    border-radius: 50%;
+    border: 2px solid #505050;
+}
+
+.Face-text {
+    font-size: 100px;
+    font-weight: bolder;
+}

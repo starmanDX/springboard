@@ -1,0 +1,19 @@
+.EightBall {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 300px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+.clicker {
+    height: 300px;
+    width: 300px;
+    position: relative;
+    z-index: 1
+}
