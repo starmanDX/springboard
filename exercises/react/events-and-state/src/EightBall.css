@@ -1,7 +1,6 @@
 .EightBall {
     position: absolute;
     z-index: -1;
-    left: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,9 +10,21 @@
     border-radius: 50%;
 }
 
+.EightBall-face {
+    position: absolute;
+    z-index: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    border: 2px solid #505050;
+}
+
 .clicker {
     height: 300px;
     width: 300px;
-    position: relative;
-    z-index: 1
+    position: absolute;
+    border-radius: 50%;
 }

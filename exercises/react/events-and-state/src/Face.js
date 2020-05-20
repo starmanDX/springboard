@@ -1,23 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Face.css";
 
-const Face = ({ bgColor, answerColor, text }) => {
-  const divStyle = {
-    backgroundColor: bgColor,
-  };
-  if (answerColor) {
+const Face = ({ questionOrAnswer, answer }) => {
+  if (questionOrAnswer === "question") {
     return (
-      <div className="Face" style={divStyle}>
-        <div>
-          <p className="Face-text">{text}</p>
-        </div>
+      <div className="Face">
+        <p className="Face-text">8</p>
       </div>
     );
   } else {
+    const classes = `Face-answer ${answer.color}`;
     return (
-      <div className="Face" style={divStyle}>
-        <p className="Face-text">{text}</p>
-      </div>
+      <>
+        <div className={classes}></div>
+        <p className="Face-answer-text">{answer.msg}</p>
+      </>
     );
   }
 };
