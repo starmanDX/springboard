@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const NewItemForm = ({ addItem }) => {
   const INITIAL_STATE = {
     name: "",
-    qty: "",
+    qty: "1",
   };
   const [formData, setFormData] = useState(INITIAL_STATE);
   const handleChange = (e) => {
@@ -14,9 +14,9 @@ const NewItemForm = ({ addItem }) => {
     }));
   };
   const handleSubmit = (e) => {
-      e.preventDefault();
-      addItem({...formData})
-      setFormData(INITIAL_STATE)
+    e.preventDefault();
+    addItem({ ...formData });
+    setFormData(INITIAL_STATE);
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -28,7 +28,7 @@ const NewItemForm = ({ addItem }) => {
         placeholder="Item Name"
         value={formData.name}
         onChange={handleChange}
-          />
+      />
       <label htmlFor="qty">Quantity: {formData.qty} </label>
       <input
         id="qty"
