@@ -1,0 +1,26 @@
+.DeckOfCards {
+    text-align: center;
+}
+
+.DeckOfCards-draw {
+    padding: 15px;
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    margin: 0 10px;
+}
+
+.DeckOfCards-draw:hover {
+    cursor: pointer;
+    background-color: #444;
+}
+
+.DeckOfCards-draw:active,
+.DeckOfCards-draw:focus {
+    outline: none;
+}
+
+.DeckOfCards-cardarea {
+    margin-top: 80px;
+}
