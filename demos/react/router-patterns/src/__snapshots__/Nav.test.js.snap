@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+<DocumentFragment>
+  <ul>
+    <li>
+      <a
+        href="/"
+      >
+        Home
+      </a>
+    </li>
+    <li>
+      <a
+        href="/about"
+      >
+        About Us
+      </a>
+    </li>
+    <li>
+      <a
+        href="/contact"
+      >
+        Contact
+      </a>
+    </li>
+    <li>
+      <a
+        href="/blog"
+      >
+        Blog
+      </a>
+    </li>
+    <li>
+      <a
+        href="/blog/new"
+      >
+        New Post
+      </a>
+    </li>
+    <li>
+      <a
+        href="/blargh"
+      >
+        Broken Link
+      </a>
+    </li>
+    <li>
+      <a
+        href="/admin"
+      >
+        Admin Dashboard
+      </a>
+    </li>
+  </ul>
+</DocumentFragment>
+`;
